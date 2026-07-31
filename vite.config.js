@@ -3,6 +3,17 @@ import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
 
 export default defineConfig({
+  // Vercel sets VERCEL_ENV ("production" | "preview" | "development") as a
+  // plain build-time env var, not one Vite exposes to the client (only
+  // VITE_-prefixed vars reach import.meta.env). Re-expose it under a VITE_
+  // name via `define` so it's statically inlined as a literal string at
+  // build time — that's what lets the dev panel's usage below be dead-code
+  // eliminated in production rather than merely hidden at runtime.
+  // Locally (no Vercel), VERCEL_ENV is unset, so this falls back to
+  // 'development', which is what makes the panel show on localhost too.
+  define: {
+    'import.meta.env.VITE_VERCEL_ENV': JSON.stringify(process.env.VERCEL_ENV || 'development'),
+  },
   server: {
     // The run-skill's Playwright driver writes screenshots/downloads under
     // .claude/skills/*/screenshots/. On Windows, a file landing there mid-write
