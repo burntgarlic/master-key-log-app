@@ -1,0 +1,130 @@
+---
+name: run-master-key-app
+description: Build, run, and drive the Master Key app (Vite + React PWA). Use when asked to start the dev server, build it, take a screenshot of its UI, or interact with the Timer/Manual/Log/Chat tabs.
+---
+
+This is a Vite + React web app (no chromium-cli available in this environment), driven headlessly via a small Playwright-based REPL at
+`.claude/skills/run-master-key-app/driver.mjs`. Pipe a script to its stdin the same way you'd use chromium-cli; it launches Chromium, navigates, clicks, and screenshots against the running dev server.
+
+All paths below are relative to the repo root.
+
+## Prerequisites
+
+Playwright and its Chromium binary are already project dev-dependencies once set up:
+
+```bash
+npm install                      # installs playwright (in devDependencies)
+npx playwright install chromium  # downloads the browser binary (~300MB, one-time)
+```
+
+## Build
+
+```bash
+npm run build   # vite build — verifies the PWA plugin + bundle succeed
+```
+
+## Run (agent path)
+
+1. Start the dev server in the background and wait for it to actually serve. **Vite auto-increments the port if 5173 is taken** — read the real port from its stdout, don't assume 5173:
+
+```bash
+npm run dev > /tmp/vite-dev.log 2>&1 &
+disown
+timeout 30 bash -c 'until grep -q "Local:" /tmp/vite-dev.log; do sleep 1; done'
+sed -E 's/\x1b\[[0-9;]*[a-zA-Z]//g' /tmp/vite-dev.log | grep -o 'http://localhost:[0-9]*' | head -1
+```
+
+2. Drive it with the REPL driver — pipe a script to stdin, one command per line:
+
+```bash
+node .claude/skills/run-master-key-app/driver.mjs <<'EOF'
+launch http://localhost:5173/
+wait-for text=Stopwatch
+ss 01-landing
+console --errors
+quit
+EOF
+```
+
+Screenshots land in `.claude/skills/run-master-key-app/screenshots/` (override via `SCREENSHOT_DIR`).
+
+Commands are serialized internally (a promise queue behind the `line` handler), so a whole heredoc arriving at once still executes in order — you don't need tmux or one-line-at-a-time sending.
+
+### Commands
+
+| command | what it does |
+|---|---|
+| `launch <url>` | launch headless Chromium, open a page, navigate to `<url>` |
+| `nav <url>` | navigate the existing page |
+| `wait-for <css-selector>` | wait up to 10s for a selector |
+| `wait-for text=<text>` | wait up to 10s for `<text>` to appear anywhere in `document.body.textContent` |
+| `click <css-selector>` | click via Playwright's `page.click` |
+| `click-text <text>` | click the first button/link/`[role=button]` matching `<text>` (exact, then substring) |
+| `fill <css-selector> <value>` | fill an input |
+| `press <key>` | keyboard press (e.g. `Enter`) |
+| `ss [name]` | screenshot → `screenshots/<name or timestamp>.png` |
+| `text [css-selector]` | print `innerText` of selector (default: whole page) |
+| `eval <js>` | evaluate an expression in the page, print JSON |
+| `console --errors` | print collected `console.error`/pageerror output since launch |
+| `offline` / `online` | toggle `context.setOffline` — for verifying PWA offline caching |
+| `reload` | reload the current page (combine with `offline` to test the service worker cache) |
+| `quit` | close the browser |
+
+### PWA / offline verification
+
+The service worker only activates against a **production build**, not `npm run dev` (no `devOptions.enabled` in `vite.config.js`). To confirm the app actually works offline:
+
+```bash
+npm run build
+npm run preview > /tmp/vite-preview.log 2>&1 &
+disown
+timeout 30 bash -c 'until grep -q "Local:" /tmp/vite-preview.log; do sleep 1; done'
+sed -E 's/\x1b\[[0-9;]*[a-zA-Z]//g' /tmp/vite-preview.log | grep -o 'http://localhost:[0-9]*' | head -1
+
+node .claude/skills/run-master-key-app/driver.mjs <<'EOF'
+launch http://localhost:4173/
+wait-for text=Timer
+eval navigator.serviceWorker.ready.then(() => 'sw-ready')
+offline
+reload
+wait-for text=Timer
+console --errors
+quit
+EOF
+```
+
+The first `launch` + `serviceWorker.ready` lets the SW install and precache before going offline; `reload` while offline proves the app is actually served from the cache, not the network.
+
+### Stopping the dev server
+
+```bash
+netstat -ano | grep LISTENING | grep :5173   # find the PID on whatever port it bound
+taskkill //PID <pid> //F
+```
+
+## Run (human path)
+
+```bash
+npm run dev   # prints a Local: http://localhost:XXXX/ URL — open it yourself
+```
+
+## Test
+
+No test suite yet — the driver script above is the only automated verification in place.
+
+---
+
+## Gotchas
+
+- **Vite's printed URL has ANSI color codes wrapping the port number** (`http://localhost:\x1b[1m5173\x1b[22m/`), so a naive `grep -o 'http://localhost:[0-9]*'` on the raw log matches zero digits and returns `http://localhost:` with nothing after the colon. Strip ANSI first with `sed -E 's/\x1b\[[0-9;]*[a-zA-Z]//g'` before grepping, as the command above does.
+- **Vite silently moves ports.** If something is already listening on 5173 (a dev server left running from a previous session), Vite picks 5174+ without failing. Always read the actual port from the dev server's stdout rather than hardcoding 5173 — a stale server can otherwise make you drive/screenshot the wrong instance.
+- **A plain `readline` `line` handler races a piped heredoc.** All lines of a heredoc arrive in one burst; if each `line` handler is `await`ed but not otherwise serialized, an async command like `launch` (which takes ~1s to boot Chromium) hasn't resolved before `nav`/`click` on the next line fire. The driver queues each line behind a running promise chain specifically to avoid this — don't remove that when editing the driver.
+- **`click-text` on the bottom nav** matches by substring because each nav button's `textContent` is the emoji icon concatenated with the label (e.g. `⏱Timer`), not the label alone — exact-match would never hit.
+- **The very first `launch` after a new npm dependency lands (e.g. adding `react-markdown`) triggers a forced full-page reload mid-session.** Vite's dev server pre-bundles deps on first request; if that discovers a new one, it logs `optimized dependencies changed. reloading` and reloads the page out from under you. Any command that fires in that instant throws `Execution context was destroyed, most likely because of a navigation`. Fix: put a `wait-for` right after `launch` (e.g. `wait-for text=Timer`) before doing anything else — `wait-for` retries across navigations, so it rides out the reload; a `click`/`eval` fired immediately does not.
+- **`wait-for text=<text>` checks `document.body.textContent`, not any single element's.** An earlier version checked only leaf elements (`el.children.length === 0`), which missed text split across nested tags — e.g. `<span>Current week: <strong>1</strong></span>` has no leaf whose own text is "Current week: 1". Checking the whole body's text content instead is what actually mirrors "is this text visible on the page anywhere."
+
+## Troubleshooting
+
+- **`npx playwright install chromium` seems to hang:** it's downloading ~300MB (Chrome for Testing + headless shell); let it finish, it prints a progress bar.
+- **Driver prints `no page — run \`launch <url>\` first`:** the `launch` command was never sent, or `quit` ran earlier in the same piped script and closed the browser before a later command.
+- **`console --errors` prints nothing after a real error:** only `console.error(...)` calls and uncaught `pageerror`s are collected — `console.warn`/`log` are intentionally not included.

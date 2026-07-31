@@ -1,0 +1,133 @@
+.timer-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 1.5rem;
+  padding-top: 0.5rem;
+}
+
+.mode-toggle {
+  display: flex;
+  background: var(--surface);
+  border-radius: 999px;
+  padding: 4px;
+  gap: 4px;
+}
+
+.mode-btn {
+  flex: 1;
+  padding: 0.6rem 0.5rem;
+  border: none;
+  border-radius: 999px;
+  background: none;
+  color: var(--text-dim);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.mode-btn.active {
+  background: var(--accent);
+  color: #14151a;
+}
+
+.timer-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.time-display {
+  font-size: 4rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+  padding: 1.5rem 0;
+}
+
+.timer-controls {
+  display: flex;
+  gap: 0.75rem;
+  width: 100%;
+}
+
+.control-btn {
+  flex: 1;
+  padding: 0.9rem 1rem;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.control-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.control-btn.primary {
+  background: var(--accent);
+  color: #14151a;
+  border-color: var(--accent);
+}
+
+.preset-row {
+  display: flex;
+  gap: 0.6rem;
+  width: 100%;
+}
+
+.preset-btn {
+  flex: 1;
+  padding: 0.7rem 0.5rem;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  cursor: pointer;
+}
+
+.preset-btn.active {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.custom-row {
+  display: flex;
+  gap: 0.6rem;
+  width: 100%;
+}
+
+.custom-input {
+  flex: 1;
+  min-width: 0;
+  padding: 0.7rem 0.9rem;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+}
+
+.finish-message {
+  color: var(--text-dim);
+  margin: -0.75rem 0 0;
+}
+
+.log-session-btn {
+  width: 100%;
+  padding: 0.9rem 1rem;
+  border-radius: 14px;
+  border: none;
+  background: transparent;
+  color: var(--accent);
+  border: 1px solid var(--accent);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}

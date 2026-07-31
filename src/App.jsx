@@ -20,7 +20,7 @@ export default function App() {
   return (
     <div className="app-shell">
       <main className="app-content">
-        <ActiveComponent />
+        <ActiveComponent onNavigate={setActiveTab} />
       </main>
 
       <nav className="bottom-nav">
