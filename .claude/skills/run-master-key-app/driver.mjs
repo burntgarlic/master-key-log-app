@@ -86,6 +86,28 @@ const COMMANDS = {
     console.log('click-text', JSON.stringify(text), '→', result)
   },
 
+  // Clicks a button/link matching <text> (same matching as click-text) and
+  // captures the resulting browser download, saving it into SHOT_DIR. Use
+  // for verifying export/download buttons actually produce the right file,
+  // not just that the click didn't throw.
+  async ['click-text-download'](rest) {
+    const [text, filename] = rest.split(/\s+(?=\S+$)/)
+    const p = requirePage()
+    const [download] = await Promise.all([
+      p.waitForEvent('download', { timeout: 10_000 }),
+      p.evaluate((t) => {
+        const els = [...document.querySelectorAll('button, a, [role="button"]')]
+        const el = els.find((e) => e.textContent?.trim() === t)
+          ?? els.find((e) => e.textContent?.includes(t))
+        if (!el) throw new Error('NOT_FOUND: ' + t)
+        el.click()
+      }, text),
+    ])
+    const dest = path.join(SHOT_DIR, filename)
+    await download.saveAs(dest)
+    console.log('downloaded:', dest, '(suggested:', download.suggestedFilename() + ')')
+  },
+
   async fill(rest) {
     const [selector, ...valueParts] = rest.split(' ')
     await requirePage().fill(selector, valueParts.join(' '))
