@@ -194,6 +194,8 @@ export default function SessionLog() {
     <div className="log-screen">
       <AuthPanel />
 
+      <WeekBrief week={activeWeekData} />
+
       <div className="week-tracker">
         <div className="week-tracker-header">
           <span>
@@ -208,8 +210,6 @@ export default function SessionLog() {
         </div>
         {unlockMessage && <p className="unlock-message">{unlockMessage}</p>}
       </div>
-
-      <WeekBrief week={activeWeekData} />
 
       <form className="log-form" onSubmit={handleSubmit}>
         <label className="field">
