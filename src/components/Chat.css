@@ -44,6 +44,38 @@
   font-style: italic;
 }
 
+.chat-bubble p,
+.chat-bubble ul,
+.chat-bubble ol {
+  margin: 0 0 0.6rem;
+}
+
+.chat-bubble p:last-child,
+.chat-bubble ul:last-child,
+.chat-bubble ol:last-child {
+  margin-bottom: 0;
+}
+
+.chat-bubble ul,
+.chat-bubble ol {
+  padding-left: 1.2rem;
+}
+
+.chat-bubble li {
+  margin-bottom: 0.25rem;
+}
+
+.chat-bubble h1,
+.chat-bubble h2,
+.chat-bubble h3 {
+  margin: 0.2rem 0 0.4rem;
+  font-size: 1rem;
+}
+
+.chat-bubble strong {
+  font-weight: 700;
+}
+
 .chat-error {
   color: #e88f4c;
   font-size: 0.85rem;

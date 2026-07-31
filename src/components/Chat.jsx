@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import ReactMarkdown from 'react-markdown'
 import './Chat.css'
 import { getCurrentWeek } from '../lib/storage.js'
 
@@ -59,7 +60,7 @@ export default function Chat() {
         )}
         {messages.map((m, i) => (
           <div key={i} className={`chat-bubble ${m.role}`}>
-            {m.content}
+            {m.role === 'assistant' ? <ReactMarkdown>{m.content}</ReactMarkdown> : m.content}
           </div>
         ))}
         {loading && <div className="chat-bubble assistant loading">Thinking…</div>}

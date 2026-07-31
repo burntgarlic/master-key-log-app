@@ -51,3 +51,11 @@ export function addSession(session) {
 export function setSessions(sessions) {
   localStorage.setItem(SESSIONS_KEY, JSON.stringify(sessions))
 }
+
+// Dev-panel only: wipes every session, the active week, and any pending
+// Timer handoff, back to a blank-install state.
+export function resetAllProgress() {
+  localStorage.removeItem(SESSIONS_KEY)
+  localStorage.removeItem(CURRENT_WEEK_KEY)
+  localStorage.removeItem(PENDING_SESSION_KEY)
+}
