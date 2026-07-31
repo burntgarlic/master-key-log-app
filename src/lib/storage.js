@@ -26,3 +26,22 @@ export function getCurrentWeek() {
 export function setCurrentWeek(week) {
   localStorage.setItem(CURRENT_WEEK_KEY, String(week))
 }
+
+const SESSIONS_KEY = 'mk_sessions'
+
+export function getSessions() {
+  const raw = localStorage.getItem(SESSIONS_KEY)
+  if (!raw) return []
+  try {
+    const parsed = JSON.parse(raw)
+    return Array.isArray(parsed) ? parsed : []
+  } catch {
+    return []
+  }
+}
+
+export function addSession(session) {
+  const next = [...getSessions(), session]
+  localStorage.setItem(SESSIONS_KEY, JSON.stringify(next))
+  return next
+}

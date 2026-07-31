@@ -1,0 +1,214 @@
+.log-screen {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.week-tracker {
+  padding: 0.9rem 1rem;
+  border-radius: 12px;
+  background: var(--surface);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.week-tracker-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 0.6rem;
+}
+
+.week-tracker-header strong {
+  color: var(--accent);
+}
+
+.tick-count {
+  font-size: 0.85rem;
+  color: var(--text-dim);
+}
+
+.tick-boxes {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.tick-box {
+  flex: 1;
+  height: 1.6rem;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: transparent;
+}
+
+.tick-box.filled {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.unlock-message {
+  margin: 0.6rem 0 0;
+  color: var(--accent);
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.log-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  font-size: 0.85rem;
+  color: var(--text-dim);
+}
+
+.field input {
+  padding: 0.7rem 0.9rem;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  color-scheme: dark;
+}
+
+.score-picker {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.score-btn {
+  flex: 1;
+  padding: 0.6rem 0;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.score-btn.active {
+  background: var(--accent);
+  color: #14151a;
+  border-color: var(--accent);
+}
+
+.log-submit-btn {
+  padding: 0.9rem 1rem;
+  border-radius: 14px;
+  border: none;
+  background: var(--accent);
+  color: #14151a;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.trend-block {
+  padding: 0.9rem 1rem;
+  border-radius: 12px;
+  background: var(--surface);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.trend-title {
+  font-size: 0.9rem;
+  color: var(--text-dim);
+  margin: 0 0 0.5rem;
+}
+
+.trend-svg {
+  width: 100%;
+  height: 60px;
+  display: block;
+}
+
+.trend-line {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.trend-dot {
+  fill: var(--accent);
+}
+
+.export-row {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.export-btn {
+  flex: 1;
+  padding: 0.7rem 1rem;
+  border-radius: 12px;
+  border: 1px solid var(--accent);
+  background: none;
+  color: var(--accent);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.export-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.history-title {
+  font-size: 1rem;
+  color: var(--text-dim);
+  margin: 0 0 0.6rem;
+}
+
+.no-history {
+  color: var(--text-dim);
+}
+
+.history-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.history-item {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.55rem 0.7rem;
+  border-radius: 10px;
+  background: var(--surface);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  font-size: 0.85rem;
+}
+
+.history-date {
+  color: var(--text-dim);
+  min-width: 5.5rem;
+}
+
+.history-week {
+  color: var(--text-dim);
+}
+
+.history-score {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.history-note {
+  margin-left: auto;
+  color: var(--text-dim);
+  font-style: italic;
+}
