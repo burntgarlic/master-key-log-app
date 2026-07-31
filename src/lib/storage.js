@@ -45,3 +45,9 @@ export function addSession(session) {
   localStorage.setItem(SESSIONS_KEY, JSON.stringify(next))
   return next
 }
+
+// Overwrites the whole sessions array — used to apply a cloud download or a
+// merge result, as opposed to addSession's single-entry append.
+export function setSessions(sessions) {
+  localStorage.setItem(SESSIONS_KEY, JSON.stringify(sessions))
+}

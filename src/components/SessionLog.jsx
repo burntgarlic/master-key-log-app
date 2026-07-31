@@ -8,6 +8,8 @@ import {
   getCurrentWeek,
   setCurrentWeek,
 } from '../lib/storage.js'
+import { scheduleSync } from '../lib/cloudSync.js'
+import AuthPanel from './AuthPanel.jsx'
 
 const SCORE_LABELS = ['Scattered', 'Restless', 'Workable', 'Settled', 'Absorbed']
 const WEEKS_TOTAL = 26
@@ -133,6 +135,7 @@ export default function SessionLog() {
     setMinutes('')
     setScore(null)
     setNote('')
+    scheduleSync()
   }
 
   function handleExportJSON() {
@@ -150,6 +153,8 @@ export default function SessionLog() {
 
   return (
     <div className="log-screen">
+      <AuthPanel />
+
       <div className="week-tracker">
         <div className="week-tracker-header">
           <span>
