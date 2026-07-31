@@ -9,7 +9,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url))
 // touches the fetch call, never how context is assembled.
 const MANUAL_TEXT = readFileSync(join(__dirname, '..', 'src', 'content', 'manual.md'), 'utf-8')
 
-const MODEL = 'gemini-2.5-flash'
+const MODEL = 'gemini-3.6-flash'
 const MAX_HISTORY = 20
 
 function buildSystemInstruction(currentWeek) {
