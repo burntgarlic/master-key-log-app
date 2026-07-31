@@ -45,6 +45,53 @@
   border-color: var(--accent);
 }
 
+.week-brief {
+  border-radius: 12px;
+  background: var(--surface);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+}
+
+.week-brief-toggle {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  background: none;
+  border: none;
+  color: var(--text);
+  font: inherit;
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+}
+
+.week-brief-chevron {
+  color: var(--text-dim);
+  font-size: 0.75rem;
+}
+
+.week-brief-body {
+  padding: 0 1rem 0.9rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.week-brief-essence,
+.week-brief-practice {
+  margin: 0;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: var(--text-dim);
+}
+
+.week-brief-essence strong {
+  color: var(--text);
+}
+
 .unlock-message {
   margin: 0.6rem 0 0;
   color: var(--accent);

@@ -8,6 +8,7 @@ import {
   getCurrentWeek,
   setCurrentWeek,
 } from '../lib/storage.js'
+import { manualText, parseWeeks, extractWeekBrief } from '../lib/manual.js'
 
 const SCORE_LABELS = ['Scattered', 'Restless', 'Workable', 'Settled', 'Absorbed']
 const WEEKS_TOTAL = 26
@@ -86,6 +87,41 @@ function AttentionTrend({ sessions }) {
   )
 }
 
+function WeekBrief({ week }) {
+  const [expanded, setExpanded] = useState(false)
+  if (!week) return null
+
+  const { essence, practice } = extractWeekBrief(week.body)
+
+  return (
+    <div className="week-brief">
+      <button
+        type="button"
+        className="week-brief-toggle"
+        onClick={() => setExpanded((v) => !v)}
+        aria-expanded={expanded}
+      >
+        <span>
+          Week {week.number} — {week.title}
+        </span>
+        <span className="week-brief-chevron" aria-hidden="true">
+          {expanded ? '▲' : '▼'}
+        </span>
+      </button>
+      {expanded && (
+        <div className="week-brief-body">
+          {essence && (
+            <p className="week-brief-essence">
+              <strong>Essence:</strong> {essence}
+            </p>
+          )}
+          {practice && <p className="week-brief-practice">{practice}</p>}
+        </div>
+      )}
+    </div>
+  )
+}
+
 export default function SessionLog() {
   const [sessions, setSessions] = useState(() => getSessions())
   const [activeWeek, setActiveWeek] = useState(() => getCurrentWeek())
@@ -97,6 +133,9 @@ export default function SessionLog() {
   const [score, setScore] = useState(null)
   const [note, setNote] = useState('')
   const [unlockMessage, setUnlockMessage] = useState(null)
+
+  const weeks = useMemo(() => parseWeeks(manualText), [])
+  const activeWeekData = weeks.find((w) => w.number === activeWeek)
 
   const ticksThisWeek = sessions.filter((s) => s.week === activeWeek).length
 
@@ -164,6 +203,8 @@ export default function SessionLog() {
         </div>
         {unlockMessage && <p className="unlock-message">{unlockMessage}</p>}
       </div>
+
+      <WeekBrief week={activeWeekData} />
 
       <form className="log-form" onSubmit={handleSubmit}>
         <label className="field">

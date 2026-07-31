@@ -30,6 +30,18 @@ export function parseWeeks(text) {
   })
 }
 
+// Pulls just the Essence line and The Practice paragraph out of a week's
+// body — the two fields short enough to show inline above the Session Log
+// form without rendering the week's full markdown.
+export function extractWeekBrief(body) {
+  const essenceMatch = body.match(/\*\*Essence:\*\*\s*([^\n]+)/)
+  const practiceMatch = body.match(/\*\*The practice\.\*\*\s*([\s\S]+?)\n\s*\n/)
+  return {
+    essence: essenceMatch ? essenceMatch[1].trim() : null,
+    practice: practiceMatch ? practiceMatch[1].trim() : null,
+  }
+}
+
 function stripMarkdown(text) {
   return text
     .replace(/^#+\s*/gm, '')
