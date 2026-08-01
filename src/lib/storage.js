@@ -52,12 +52,46 @@ export function setSessions(sessions) {
   localStorage.setItem(SESSIONS_KEY, JSON.stringify(sessions))
 }
 
-// Dev-panel only: wipes every session, the active week, and any pending
-// Timer handoff, back to a blank-install state.
+const DELETED_SESSION_IDS_KEY = 'mk_deleted_session_ids'
+
+// Map of { [sessionId]: deletedAtISOString }. Sessions sync via a union
+// merge (local ∪ cloud by id), so a plain delete would resurrect the moment
+// another device's stale copy re-enters that union — the tombstone set is
+// what the merge excludes against, so a delete actually sticks everywhere.
+export function getDeletedSessionIds() {
+  const raw = localStorage.getItem(DELETED_SESSION_IDS_KEY)
+  if (!raw) return {}
+  try {
+    const parsed = JSON.parse(raw)
+    return parsed && typeof parsed === 'object' && !Array.isArray(parsed) ? parsed : {}
+  } catch {
+    return {}
+  }
+}
+
+export function setDeletedSessionIds(map) {
+  localStorage.setItem(DELETED_SESSION_IDS_KEY, JSON.stringify(map || {}))
+}
+
+// Removes a session locally and tombstones its id so cloud sync's merge
+// never brings it back. Returns the updated sessions array.
+export function deleteSession(id) {
+  const tombstones = getDeletedSessionIds()
+  tombstones[id] = new Date().toISOString()
+  setDeletedSessionIds(tombstones)
+
+  const remaining = getSessions().filter((s) => s.id !== id)
+  setSessions(remaining)
+  return remaining
+}
+
+// Dev-panel only: wipes every session, the active week, any pending Timer
+// handoff, and the delete tombstone set, back to a blank-install state.
 export function resetAllProgress() {
   localStorage.removeItem(SESSIONS_KEY)
   localStorage.removeItem(CURRENT_WEEK_KEY)
   localStorage.removeItem(PENDING_SESSION_KEY)
+  localStorage.removeItem(DELETED_SESSION_IDS_KEY)
 }
 
 const GUEST_MODE_KEY = 'mk_guest_mode'
