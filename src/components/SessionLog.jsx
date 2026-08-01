@@ -9,7 +9,6 @@ import {
   setCurrentWeek,
 } from '../lib/storage.js'
 import { scheduleSync } from '../lib/cloudSync.js'
-import AuthPanel from './AuthPanel.jsx'
 import { manualText, parseWeeks, extractWeekBrief } from '../lib/manual.js'
 
 const SCORE_LABELS = ['Scattered', 'Restless', 'Workable', 'Settled', 'Absorbed']
@@ -192,8 +191,6 @@ export default function SessionLog() {
 
   return (
     <div className="log-screen">
-      <AuthPanel />
-
       <WeekBrief week={activeWeekData} />
 
       <div className="week-tracker">
