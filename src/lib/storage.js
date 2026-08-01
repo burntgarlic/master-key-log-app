@@ -46,6 +46,12 @@ export function addSession(session) {
   return next
 }
 
+// Overwrites the whole sessions array — used to apply a cloud download or a
+// merge result, as opposed to addSession's single-entry append.
+export function setSessions(sessions) {
+  localStorage.setItem(SESSIONS_KEY, JSON.stringify(sessions))
+}
+
 // Dev-panel only: wipes every session, the active week, and any pending
 // Timer handoff, back to a blank-install state.
 export function resetAllProgress() {
