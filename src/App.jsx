@@ -3,6 +3,7 @@ import './App.css'
 import Timer from './components/Timer.jsx'
 import Manual from './components/Manual.jsx'
 import SessionLog from './components/SessionLog.jsx'
+import Journal from './components/Journal.jsx'
 import Chat from './components/Chat.jsx'
 import DevPanel from './components/DevPanel.jsx'
 import LoginGate from './components/LoginGate.jsx'
@@ -15,6 +16,7 @@ const TABS = [
   { id: 'timer', label: 'Timer', icon: '⏱', Component: Timer },
   { id: 'manual', label: 'Manual', icon: '📖', Component: Manual },
   { id: 'log', label: 'Log', icon: '📝', Component: SessionLog },
+  { id: 'journal', label: 'Journal', icon: '📔', Component: Journal },
   { id: 'chat', label: 'Chat', icon: '💬', Component: Chat },
 ]
 
