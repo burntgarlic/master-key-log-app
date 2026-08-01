@@ -59,3 +59,19 @@ export function resetAllProgress() {
   localStorage.removeItem(CURRENT_WEEK_KEY)
   localStorage.removeItem(PENDING_SESSION_KEY)
 }
+
+const GUEST_MODE_KEY = 'mk_guest_mode'
+
+// Persists "Continue without an account" so the startup login gate doesn't
+// reappear on every reload once someone's chosen offline/guest mode.
+export function getGuestMode() {
+  return localStorage.getItem(GUEST_MODE_KEY) === 'true'
+}
+
+export function setGuestMode(value) {
+  if (value) {
+    localStorage.setItem(GUEST_MODE_KEY, 'true')
+  } else {
+    localStorage.removeItem(GUEST_MODE_KEY)
+  }
+}
