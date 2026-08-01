@@ -231,6 +231,7 @@
 
 .history-item {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: 0.6rem;
   padding: 0.55rem 0.7rem;
@@ -258,4 +259,17 @@
   margin-left: auto;
   color: var(--text-dim);
   font-style: italic;
+}
+
+.history-delete-btn {
+  flex-shrink: 0;
+  padding: 0.25rem 0.55rem;
+  border-radius: 999px;
+  border: 1px solid #d16b6b;
+  background: none;
+  color: #e88f8f;
+  font: inherit;
+  font-size: 0.7rem;
+  white-space: nowrap;
+  cursor: pointer;
 }

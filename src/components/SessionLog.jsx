@@ -3,6 +3,7 @@ import './SessionLog.css'
 import {
   getSessions,
   addSession,
+  deleteSession,
   getPendingSessionMinutes,
   clearPendingSessionMinutes,
   getCurrentWeek,
@@ -176,6 +177,16 @@ export default function SessionLog() {
     scheduleSync()
   }
 
+  function handleDelete(id) {
+    if (!window.confirm('Delete this session? This cannot be undone.')) return
+    // Recomputes ticksThisWeek/history/sparkline automatically since they're
+    // all derived from `sessions` state. currentWeek is untouched here on
+    // purpose — deleting a past session must never move the tracker backward.
+    const updated = deleteSession(id)
+    setSessions(updated)
+    scheduleSync()
+  }
+
   function handleExportJSON() {
     downloadFile('master-key-sessions.json', JSON.stringify(sessions, null, 2), 'application/json')
   }
@@ -286,6 +297,14 @@ export default function SessionLog() {
                 <span className="history-minutes">{s.minutes} min</span>
                 <span className="history-score">{s.score}/5</span>
                 <span className="history-note">{s.note}</span>
+                <button
+                  type="button"
+                  className="history-delete-btn"
+                  onClick={() => handleDelete(s.id)}
+                  aria-label={`Delete session logged on ${s.date}`}
+                >
+                  Delete
+                </button>
               </li>
             ))}
           </ul>
