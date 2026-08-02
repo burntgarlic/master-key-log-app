@@ -12,12 +12,14 @@ function makeSnippet(text, query, radius = 70) {
   return (start > 0 ? '…' : '') + text.slice(start, end) + (end < text.length ? '…' : '')
 }
 
-export default function Manual() {
+export default function Manual({ deepLinkWeek }) {
   const weeks = useMemo(() => parseWeeks(manualText), [])
   const searchIndex = useMemo(() => buildSearchIndex(weeks), [weeks])
   const currentWeek = getCurrentWeek()
 
-  const [selectedWeek, setSelectedWeek] = useState(currentWeek)
+  // A notification's deep link (?week=N, consumed once in App.jsx) opens
+  // straight to that week instead of the current one.
+  const [selectedWeek, setSelectedWeek] = useState(deepLinkWeek || currentWeek)
   const [query, setQuery] = useState('')
   const [pendingHighlight, setPendingHighlight] = useState(null)
   const bodyRef = useRef(null)

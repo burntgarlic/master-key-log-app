@@ -11,6 +11,7 @@ import {
 } from '../lib/storage.js'
 import { scheduleSync } from '../lib/cloudSync.js'
 import { manualText, parseWeeks, extractWeekBrief } from '../lib/manual.js'
+import NotificationSettings from './NotificationSettings.jsx'
 
 const SCORE_LABELS = ['Scattered', 'Restless', 'Workable', 'Settled', 'Absorbed']
 const WEEKS_TOTAL = 26
@@ -124,7 +125,7 @@ function WeekBrief({ week }) {
   )
 }
 
-export default function SessionLog() {
+export default function SessionLog({ session }) {
   const [sessions, setSessions] = useState(() => getSessions())
   const [activeWeek, setActiveWeek] = useState(() => getCurrentWeek())
   const [date, setDate] = useState(todayLocalISO)
@@ -202,6 +203,8 @@ export default function SessionLog() {
 
   return (
     <div className="log-screen">
+      <NotificationSettings session={session} />
+
       <WeekBrief week={activeWeekData} />
 
       <div className="week-tracker">
