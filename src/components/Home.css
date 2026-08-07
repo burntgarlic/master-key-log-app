@@ -25,13 +25,50 @@
 .hero-card {
   position: relative;
   overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  gap: 0.9rem;
   padding: 1.25rem;
   border-radius: var(--radius);
   background: var(--surface);
   border: 1px solid var(--border);
+}
+
+/* Ambient "breathing" glow behind the hero content — a soft, slow, low-
+   opacity pulse. Purely decorative (pointer-events: none), clipped to the
+   card by .hero-card's overflow: hidden above. */
+.hero-card::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 340px;
+  height: 340px;
+  margin: -170px 0 0 -170px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(var(--accent-rgb), 0.35) 0%, rgba(var(--accent-rgb), 0) 70%);
+  opacity: 0.5;
+  pointer-events: none;
+  animation: hero-breathe 8s ease-in-out infinite;
+}
+
+@keyframes hero-breathe {
+  0%, 100% {
+    transform: scale(0.92);
+    opacity: 0.35;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 0.6;
+  }
+}
+
+/* Wraps the hero's real content. Needs its own stacking position — a
+   positioned ::before with z-index:auto (the glow above) would otherwise
+   paint *above* ordinary static in-flow siblings, not behind them. */
+.hero-content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
 }
 
 .hero-week-label {
@@ -116,6 +153,12 @@
   font: inherit;
   text-align: left;
   cursor: pointer;
+  transition: transform 0.2s ease-out, box-shadow 0.2s ease-out;
+}
+
+.quick-action-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-lg);
 }
 
 .quick-action-icon {
@@ -156,4 +199,72 @@
   font-style: italic;
   font-size: 1.05rem;
   line-height: 1.5;
+}
+
+/* Gentle staggered entrance — each card fades/lifts in slightly after the
+   one before it, so the dashboard settles into place rather than popping
+   in all at once. Small translate (10px), slow-ish duration (1s), eased
+   out — calm, not bouncy. */
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.home-header,
+.hero-card,
+.quick-action-card,
+.seed-card {
+  animation: fade-in-up 1s ease-out both;
+}
+
+.home-header {
+  animation-delay: 0s;
+}
+
+.hero-card {
+  animation-delay: 0.1s;
+}
+
+.quick-action-card:nth-child(1) {
+  animation-delay: 0.2s;
+}
+
+.quick-action-card:nth-child(2) {
+  animation-delay: 0.25s;
+}
+
+.quick-action-card:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+.quick-action-card:nth-child(4) {
+  animation-delay: 0.35s;
+}
+
+.seed-card {
+  animation-delay: 0.4s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-card::before,
+  .home-header,
+  .hero-card,
+  .quick-action-card,
+  .seed-card {
+    animation: none;
+  }
+
+  .quick-action-card {
+    transition: none;
+  }
+
+  .quick-action-card:hover {
+    transform: none;
+  }
 }

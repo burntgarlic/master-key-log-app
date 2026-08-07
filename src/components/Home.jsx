@@ -74,33 +74,42 @@ export default function Home({ onNavigate }) {
       </div>
 
       <div className="hero-card">
-        {weekData ? (
-          <>
-            <span className="hero-week-label">
-              Week {currentWeek}
-              {phase ? ` · Phase ${phase}` : ''}
-            </span>
-            <h2 className="hero-week-title">{weekData.title}</h2>
-            {essence && <p className="hero-essence">{essence}</p>}
-
-            <button type="button" className="hero-begin-btn" onClick={handleBeginPractice}>
-              {beginLabel}
-            </button>
-
-            <div className="hero-week-tracker">
-              <div className="week-dots">
-                {Array.from({ length: TICKS_TO_UNLOCK }, (_, i) => (
-                  <span key={i} className={`week-dot${i < ticksThisWeek ? ' filled' : ''}`} />
-                ))}
-              </div>
-              <span className="hero-tick-count">
-                {Math.min(ticksThisWeek, TICKS_TO_UNLOCK)}/{TICKS_TO_UNLOCK} sessions
+        {/* Decorative ambient "breathing" glow, painted via .hero-card::before
+            (see Home.css) — sits behind this wrapper. Without a wrapper of
+            its own, the real content would actually paint *above* the glow
+            anyway (a positioned ::before with z-index:auto outranks static
+            in-flow siblings in the stacking order), but giving it one
+            explicit z-index here makes that non-negotiable rather than
+            incidental. */}
+        <div className="hero-content">
+          {weekData ? (
+            <>
+              <span className="hero-week-label">
+                Week {currentWeek}
+                {phase ? ` · Phase ${phase}` : ''}
               </span>
-            </div>
-          </>
-        ) : (
-          <p className="hero-essence">Start your practice to see this week's focus here.</p>
-        )}
+              <h2 className="hero-week-title">{weekData.title}</h2>
+              {essence && <p className="hero-essence">{essence}</p>}
+
+              <button type="button" className="hero-begin-btn" onClick={handleBeginPractice}>
+                {beginLabel}
+              </button>
+
+              <div className="hero-week-tracker">
+                <div className="week-dots">
+                  {Array.from({ length: TICKS_TO_UNLOCK }, (_, i) => (
+                    <span key={i} className={`week-dot${i < ticksThisWeek ? ' filled' : ''}`} />
+                  ))}
+                </div>
+                <span className="hero-tick-count">
+                  {Math.min(ticksThisWeek, TICKS_TO_UNLOCK)}/{TICKS_TO_UNLOCK} sessions
+                </span>
+              </div>
+            </>
+          ) : (
+            <p className="hero-essence">Start your practice to see this week's focus here.</p>
+          )}
+        </div>
       </div>
 
       <div className="quick-actions-grid">
