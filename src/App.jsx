@@ -7,7 +7,7 @@ import Journal from './components/Journal.jsx'
 import Chat from './components/Chat.jsx'
 import DevPanel from './components/DevPanel.jsx'
 import LoginGate from './components/LoginGate.jsx'
-import AccountBar from './components/AccountBar.jsx'
+import AccountMenu from './components/AccountMenu.jsx'
 import { useAuthSession } from './lib/useAuthSession.js'
 import { supabase } from './lib/supabaseClient.js'
 import { getGuestMode, setGuestMode } from './lib/storage.js'
@@ -75,7 +75,7 @@ export default function App() {
 
   return (
     <div className="app-shell">
-      {supabaseEnabled && <AccountBar session={session} onSignInClick={handleSignInWithGoogle} />}
+      {supabaseEnabled && <AccountMenu session={session} onSignInClick={handleSignInWithGoogle} />}
 
       <main className="app-content">
         <ActiveComponent onNavigate={setActiveTab} session={session} deepLinkWeek={deepLinkWeek} />
