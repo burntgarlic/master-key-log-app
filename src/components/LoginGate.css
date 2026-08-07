@@ -15,7 +15,7 @@
   align-items: stretch;
   gap: 1rem;
   padding: 2rem 1.5rem;
-  border-radius: 16px;
+  border-radius: var(--radius);
   background: var(--surface);
   border: 1px solid var(--border);
   text-align: center;
@@ -23,7 +23,9 @@
 
 .login-gate-title {
   margin: 0;
-  font-size: 1.6rem;
+  font-family: var(--font-serif);
+  font-size: 1.7rem;
+  font-weight: 600;
 }
 
 .login-gate-subtitle {
@@ -35,7 +37,7 @@
 
 .google-signin-btn {
   padding: 0.85rem 1rem;
-  border-radius: 14px;
+  border-radius: var(--radius-btn);
   border: none;
   background: var(--accent);
   color: var(--on-accent);
@@ -46,7 +48,7 @@
 
 .continue-offline-btn {
   padding: 0.6rem 1rem;
-  border-radius: 14px;
+  border-radius: var(--radius-btn);
   border: none;
   background: none;
   color: var(--text-dim);

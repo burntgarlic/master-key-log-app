@@ -95,7 +95,7 @@
 
 .hero-begin-btn {
   padding: 0.9rem 1rem;
-  border-radius: var(--radius);
+  border-radius: var(--radius-btn);
   border: none;
   background: var(--accent);
   color: var(--on-accent);

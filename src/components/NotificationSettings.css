@@ -1,5 +1,5 @@
 .notification-settings {
-  border-radius: 12px;
+  border-radius: var(--radius);
   background: var(--surface);
   border: 1px solid var(--border);
   overflow: hidden;

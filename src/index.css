@@ -31,7 +31,8 @@
   --accent-rgb: 224, 168, 46;
   --on-accent: #14151a; /* dark text on gold buttons, in both themes */
   --nav-height: 64px;
-  --radius: 12px;
+  --radius: 12px; /* cards */
+  --radius-btn: 14px; /* primary/CTA buttons */
   --font-serif: 'Newsreader', Georgia, serif;
 
   /* Dark palette (default). */

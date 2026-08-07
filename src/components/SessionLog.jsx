@@ -106,7 +106,7 @@ function WeekBrief({ week }) {
         onClick={() => setExpanded((v) => !v)}
         aria-expanded={expanded}
       >
-        <span>
+        <span className="week-brief-title">
           Week {week.number} — {week.title}
         </span>
         <span className="week-brief-chevron" aria-hidden="true">
