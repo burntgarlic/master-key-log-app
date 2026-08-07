@@ -77,20 +77,24 @@
   background: var(--border);
 }
 
-.theme-control {
+.settings-group {
   display: flex;
   flex-direction: column;
   gap: 0.4rem;
 }
 
-.theme-control-label {
+.settings-group + .settings-group {
+  margin-top: 0.2rem;
+}
+
+.settings-label {
   font-size: 0.75rem;
   color: var(--text-dim);
   text-transform: uppercase;
   letter-spacing: 0.04em;
 }
 
-.theme-control-options {
+.segmented-control {
   display: flex;
   background: var(--bg);
   border-radius: 999px;
@@ -98,7 +102,7 @@
   gap: 3px;
 }
 
-.theme-option-btn {
+.segmented-option {
   flex: 1;
   padding: 0.4rem 0.5rem;
   border: none;
@@ -111,7 +115,55 @@
   cursor: pointer;
 }
 
-.theme-option-btn.active {
+.segmented-option.active {
   background: var(--accent);
   color: var(--on-accent);
+}
+
+.practice-length-row {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.practice-chip {
+  padding: 0.35rem 0.65rem;
+  border-radius: 999px;
+  border: 1px solid var(--border-strong);
+  background: var(--bg);
+  color: var(--text-dim);
+  font: inherit;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.practice-chip.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--on-accent);
+}
+
+.practice-custom-input {
+  flex: 1;
+  min-width: 0;
+  padding: 0.35rem 0.5rem;
+  border-radius: 999px;
+  border: 1px solid var(--border-strong);
+  background: var(--bg);
+  color: var(--text);
+  font: inherit;
+  font-size: 0.75rem;
+}
+
+.practice-custom-set-btn {
+  flex-shrink: 0;
+  padding: 0.35rem 0.6rem;
+  border-radius: 999px;
+  border: 1px solid var(--border-strong);
+  background: none;
+  color: var(--text);
+  font: inherit;
+  font-size: 0.75rem;
+  cursor: pointer;
 }

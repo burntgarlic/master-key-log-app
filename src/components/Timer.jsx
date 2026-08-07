@@ -2,7 +2,12 @@ import { useEffect, useRef, useState } from 'react'
 import './Timer.css'
 import { useWakeLock } from '../lib/useWakeLock.js'
 import { primeChime, playChime } from '../lib/chime.js'
-import { setPendingSessionMinutes, setPendingSessionStartTime } from '../lib/storage.js'
+import {
+  setPendingSessionMinutes,
+  setPendingSessionStartTime,
+  getPracticeLength,
+  getPracticeStyle,
+} from '../lib/storage.js'
 import { toLocalTimeString } from '../lib/time.js'
 
 const PRESET_MINUTES = [15, 20, 30]
@@ -65,12 +70,13 @@ function useStopwatch() {
   return { elapsedMs, running, start, pause, reset, startedAt: sessionStartRef.current }
 }
 
-function useCountdown(onFinish) {
-  const [durationMs, setDurationMs] = useState(PRESET_MINUTES[0] * 60000)
-  const [remainingMs, setRemainingMs] = useState(PRESET_MINUTES[0] * 60000)
+function useCountdown(onFinish, initialMinutes) {
+  const initialMs = initialMinutes * 60000
+  const [durationMs, setDurationMs] = useState(initialMs)
+  const [remainingMs, setRemainingMs] = useState(initialMs)
   const [running, setRunning] = useState(false)
   const [finished, setFinished] = useState(false)
-  const baseRemainingRef = useRef(PRESET_MINUTES[0] * 60000)
+  const baseRemainingRef = useRef(initialMs)
   const startedAtRef = useRef(null)
   // Same "true first start, survives pause/resume" tracking as the
   // stopwatch's sessionStartRef — see its comment there.
@@ -131,12 +137,15 @@ function useCountdown(onFinish) {
 }
 
 export default function Timer({ onNavigate }) {
-  const [mode, setMode] = useState('stopwatch')
+  // 'countdown' / 'stopwatch' is the same vocabulary getPracticeStyle()
+  // already returns, so it doubles as the initial mode with no translation
+  // — opening the Timer tab lands on whichever style the user prefers.
+  const [mode, setMode] = useState(getPracticeStyle)
   const stopwatch = useStopwatch()
   const countdown = useCountdown(() => {
     playChime()
     navigator.vibrate?.([200, 100, 200])
-  })
+  }, getPracticeLength())
   const [customMinutes, setCustomMinutes] = useState('')
 
   useWakeLock(stopwatch.running || countdown.running)

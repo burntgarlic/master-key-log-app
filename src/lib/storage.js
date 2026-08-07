@@ -112,6 +112,35 @@ export function resetAllProgress() {
   localStorage.removeItem(DELETED_SESSION_IDS_KEY)
 }
 
+const PRACTICE_LENGTH_KEY = 'mk_practice_length'
+const DEFAULT_PRACTICE_LENGTH = 15 // matches the manual's own starting point
+
+// The user's preferred countdown duration (minutes) — read by both the
+// Home dashboard's "Begin practice" button and the Timer tab itself, so
+// they always agree on how long a session should be by default.
+export function getPracticeLength() {
+  const raw = localStorage.getItem(PRACTICE_LENGTH_KEY)
+  const value = raw ? Number(raw) : DEFAULT_PRACTICE_LENGTH
+  return Number.isFinite(value) && value > 0 ? Math.min(180, Math.round(value)) : DEFAULT_PRACTICE_LENGTH
+}
+
+export function setPracticeLength(minutes) {
+  localStorage.setItem(PRACTICE_LENGTH_KEY, String(minutes))
+}
+
+const PRACTICE_STYLE_KEY = 'mk_practice_style'
+
+// 'countdown' | 'stopwatch' — deliberately the same vocabulary Timer.jsx's
+// own `mode` state already uses, so a caller can pass this straight
+// through as that state's initializer with no translation.
+export function getPracticeStyle() {
+  return localStorage.getItem(PRACTICE_STYLE_KEY) === 'stopwatch' ? 'stopwatch' : 'countdown'
+}
+
+export function setPracticeStyle(style) {
+  localStorage.setItem(PRACTICE_STYLE_KEY, style === 'stopwatch' ? 'stopwatch' : 'countdown')
+}
+
 const GUEST_MODE_KEY = 'mk_guest_mode'
 
 // Persists "Continue without an account" so the startup login gate doesn't

@@ -3,6 +3,7 @@ import './AccountMenu.css'
 import NotificationSettings from './NotificationSettings.jsx'
 import { supabase } from '../lib/supabaseClient.js'
 import { getThemePreference, setThemePreference } from '../lib/theme.js'
+import { getPracticeLength, setPracticeLength, getPracticeStyle, setPracticeStyle } from '../lib/storage.js'
 
 // Generic person glyph for guests — there's no email yet to derive initials
 // from.
@@ -37,17 +38,97 @@ function ThemeControl() {
   }
 
   return (
-    <div className="theme-control">
-      <span className="theme-control-label">Appearance</span>
-      <div className="theme-control-options" role="radiogroup" aria-label="Theme">
+    <div className="settings-group">
+      <span className="settings-label">Appearance</span>
+      <div className="segmented-control" role="radiogroup" aria-label="Theme">
         {THEME_OPTIONS.map((opt) => (
           <button
             key={opt.value}
             type="button"
             role="radio"
             aria-checked={pref === opt.value}
-            className={`theme-option-btn${pref === opt.value ? ' active' : ''}`}
+            className={`segmented-option${pref === opt.value ? ' active' : ''}`}
             onClick={() => choose(opt.value)}
+          >
+            {opt.label}
+          </button>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+const PRACTICE_LENGTH_PRESETS = [15, 20, 30]
+const PRACTICE_STYLE_OPTIONS = [
+  { value: 'countdown', label: 'Timed countdown' },
+  { value: 'stopwatch', label: 'Open stopwatch' },
+]
+
+// The Home dashboard's "Begin practice" button and the Timer tab both read
+// these same two values (see storage.js's getPracticeLength/getPracticeStyle)
+// — this is the one place they're set.
+function PracticeControl() {
+  const [length, setLength] = useState(getPracticeLength)
+  const [style, setStyle] = useState(getPracticeStyle)
+  const [customMinutes, setCustomMinutes] = useState('')
+  const isPresetLength = PRACTICE_LENGTH_PRESETS.includes(length)
+
+  function chooseLength(value) {
+    setPracticeLength(value)
+    setLength(value)
+    setCustomMinutes('')
+  }
+
+  function applyCustomLength() {
+    const value = Math.round(Number(customMinutes))
+    if (!Number.isFinite(value) || value <= 0) return
+    chooseLength(Math.min(value, 180))
+  }
+
+  function chooseStyle(value) {
+    setPracticeStyle(value)
+    setStyle(value)
+  }
+
+  return (
+    <div className="settings-group">
+      <span className="settings-label">Practice length</span>
+      <div className="practice-length-row">
+        {PRACTICE_LENGTH_PRESETS.map((n) => (
+          <button
+            key={n}
+            type="button"
+            className={`practice-chip${isPresetLength && length === n ? ' active' : ''}`}
+            onClick={() => chooseLength(n)}
+          >
+            {n}
+          </button>
+        ))}
+        <input
+          type="number"
+          inputMode="numeric"
+          min="1"
+          max="180"
+          className="practice-custom-input"
+          placeholder={isPresetLength ? 'Custom' : String(length)}
+          value={customMinutes}
+          onChange={(e) => setCustomMinutes(e.target.value)}
+        />
+        <button type="button" className="practice-custom-set-btn" onClick={applyCustomLength}>
+          Set
+        </button>
+      </div>
+
+      <span className="settings-label">Practice style</span>
+      <div className="segmented-control" role="radiogroup" aria-label="Practice style">
+        {PRACTICE_STYLE_OPTIONS.map((opt) => (
+          <button
+            key={opt.value}
+            type="button"
+            role="radio"
+            aria-checked={style === opt.value}
+            className={`segmented-option${style === opt.value ? ' active' : ''}`}
+            onClick={() => chooseStyle(opt.value)}
           >
             {opt.label}
           </button>
@@ -129,6 +210,10 @@ export default function AccountMenu({ session, onSignInClick, supabaseEnabled })
                 <div className="account-menu-divider" />
               </>
             )}
+
+            <PracticeControl />
+
+            <div className="account-menu-divider" />
 
             <ThemeControl />
           </div>
