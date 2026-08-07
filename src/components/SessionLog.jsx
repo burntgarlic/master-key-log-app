@@ -6,11 +6,14 @@ import {
   deleteSession,
   getPendingSessionMinutes,
   clearPendingSessionMinutes,
+  getPendingSessionStartTime,
+  clearPendingSessionStartTime,
   getCurrentWeek,
   setCurrentWeek,
 } from '../lib/storage.js'
 import { scheduleSync } from '../lib/cloudSync.js'
 import { manualText, parseWeeks, extractWeekBrief } from '../lib/manual.js'
+import { nowLocalTime, formatTimeOfDay } from '../lib/time.js'
 
 const SCORE_LABELS = ['Scattered', 'Restless', 'Workable', 'Settled', 'Absorbed']
 const WEEKS_TOTAL = 26
@@ -28,9 +31,9 @@ function csvEscape(value) {
 }
 
 function sessionsToCSV(sessions) {
-  const header = 'date,minutes,score,note,week'
+  const header = 'date,time,minutes,score,note,week'
   const rows = sessions.map((s) =>
-    [s.date, s.minutes, s.score, csvEscape(s.note), s.week].join(','),
+    [s.date, s.time ?? '', s.minutes, s.score, csvEscape(s.note), s.week].join(','),
   )
   return [header, ...rows].join('\n')
 }
@@ -128,6 +131,7 @@ export default function SessionLog() {
   const [sessions, setSessions] = useState(() => getSessions())
   const [activeWeek, setActiveWeek] = useState(() => getCurrentWeek())
   const [date, setDate] = useState(todayLocalISO)
+  const [time, setTime] = useState(() => getPendingSessionStartTime() || nowLocalTime())
   const [minutes, setMinutes] = useState(() => {
     const pending = getPendingSessionMinutes()
     return pending ? String(pending) : ''
@@ -150,6 +154,7 @@ export default function SessionLog() {
     const entry = {
       id: crypto.randomUUID(),
       date,
+      time: time || null,
       minutes: minutesValue,
       score,
       note: cleanNote,
@@ -159,6 +164,7 @@ export default function SessionLog() {
     const updated = addSession(entry)
     setSessions(updated)
     clearPendingSessionMinutes()
+    clearPendingSessionStartTime()
 
     const ticks = updated.filter((s) => s.week === activeWeek).length
     if (ticks >= TICKS_TO_UNLOCK && activeWeek < WEEKS_TOTAL) {
@@ -171,6 +177,7 @@ export default function SessionLog() {
     }
 
     setDate(todayLocalISO())
+    setTime(nowLocalTime())
     setMinutes('')
     setScore(null)
     setNote('')
@@ -220,10 +227,17 @@ export default function SessionLog() {
       </div>
 
       <form className="log-form" onSubmit={handleSubmit}>
-        <label className="field">
-          <span>Date</span>
-          <input type="date" value={date} onChange={(e) => setDate(e.target.value)} required />
-        </label>
+        <div className="field-row">
+          <label className="field">
+            <span>Date</span>
+            <input type="date" value={date} onChange={(e) => setDate(e.target.value)} required />
+          </label>
+
+          <label className="field">
+            <span>Time</span>
+            <input type="time" value={time} onChange={(e) => setTime(e.target.value)} required />
+          </label>
+        </div>
 
         <label className="field">
           <span>Minutes</span>
@@ -290,23 +304,27 @@ export default function SessionLog() {
           <p className="no-history">No sessions logged yet.</p>
         ) : (
           <ul className="history-list">
-            {history.map((s) => (
-              <li key={s.id} className="history-item">
-                <span className="history-date">{s.date}</span>
-                <span className="history-week">Wk {s.week}</span>
-                <span className="history-minutes">{s.minutes} min</span>
-                <span className="history-score">{s.score}/5</span>
-                <span className="history-note">{s.note}</span>
-                <button
-                  type="button"
-                  className="history-delete-btn"
-                  onClick={() => handleDelete(s.id)}
-                  aria-label={`Delete session logged on ${s.date}`}
-                >
-                  Delete
-                </button>
-              </li>
-            ))}
+            {history.map((s) => {
+              const timeOfDay = formatTimeOfDay(s.time)
+              return (
+                <li key={s.id} className="history-item">
+                  {timeOfDay && <span className="history-time">{timeOfDay}</span>}
+                  <span className="history-date">{s.date}</span>
+                  <span className="history-week">Wk {s.week}</span>
+                  <span className="history-minutes">{s.minutes} min</span>
+                  <span className="history-score">{s.score}/5</span>
+                  <span className="history-note">{s.note}</span>
+                  <button
+                    type="button"
+                    className="history-delete-btn"
+                    onClick={() => handleDelete(s.id)}
+                    aria-label={`Delete session logged on ${s.date}`}
+                  >
+                    Delete
+                  </button>
+                </li>
+              )
+            })}
           </ul>
         )}
       </div>

@@ -105,6 +105,16 @@
   gap: 0.9rem;
 }
 
+.field-row {
+  display: flex;
+  gap: 0.9rem;
+}
+
+.field-row .field {
+  flex: 1;
+  min-width: 0;
+}
+
 .field {
   display: flex;
   flex-direction: column;
@@ -239,6 +249,12 @@
   background: var(--surface);
   border: 1px solid rgba(255, 255, 255, 0.06);
   font-size: 0.85rem;
+}
+
+.history-time {
+  color: var(--text-dim);
+  font-size: 0.75rem;
+  opacity: 0.8;
 }
 
 .history-date {

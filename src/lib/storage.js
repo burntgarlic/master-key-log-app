@@ -13,6 +13,23 @@ export function clearPendingSessionMinutes() {
   localStorage.removeItem(PENDING_SESSION_KEY)
 }
 
+const PENDING_SESSION_TIME_KEY = 'mk_pending_session_time'
+
+// Companion to the minutes handoff above: the Timer's actual captured start
+// time (see Timer.jsx's sessionStartRef), read once by the Log form as the
+// default for its Time field and then cleared, same lifecycle as minutes.
+export function setPendingSessionStartTime(time) {
+  localStorage.setItem(PENDING_SESSION_TIME_KEY, time)
+}
+
+export function getPendingSessionStartTime() {
+  return localStorage.getItem(PENDING_SESSION_TIME_KEY)
+}
+
+export function clearPendingSessionStartTime() {
+  localStorage.removeItem(PENDING_SESSION_TIME_KEY)
+}
+
 const CURRENT_WEEK_KEY = 'mk_current_week'
 
 // The active week (1-26). Session Log owns advancing this on the 7-tick
@@ -91,6 +108,7 @@ export function resetAllProgress() {
   localStorage.removeItem(SESSIONS_KEY)
   localStorage.removeItem(CURRENT_WEEK_KEY)
   localStorage.removeItem(PENDING_SESSION_KEY)
+  localStorage.removeItem(PENDING_SESSION_TIME_KEY)
   localStorage.removeItem(DELETED_SESSION_IDS_KEY)
 }
 
