@@ -41,10 +41,10 @@ export default defineConfig({
       srcDir: 'src',
       filename: 'sw.js',
       injectManifest: {
-        globPatterns: ['**/*.{js,css,html,svg,md}'],
+        globPatterns: ['**/*.{js,css,html,svg,png,md}'],
       },
       registerType: 'autoUpdate',
-      includeAssets: ['icons/icon.svg'],
+      includeAssets: ['icons/icon.svg', 'icons/notification-icon.png', 'icons/badge.png'],
       manifest: {
         name: 'Master Key',
         short_name: 'MasterKey',
@@ -55,9 +55,15 @@ export default defineConfig({
         theme_color: '#14151a',
         icons: [
           {
-            src: '/icons/icon.svg',
-            sizes: 'any',
-            type: 'image/svg+xml',
+            src: '/icons/icon-192.png',
+            sizes: '192x192',
+            type: 'image/png',
+            purpose: 'any maskable',
+          },
+          {
+            src: '/icons/icon-512.png',
+            sizes: '512x512',
+            type: 'image/png',
             purpose: 'any maskable',
           },
         ],

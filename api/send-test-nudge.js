@@ -53,7 +53,8 @@ export default async function handler(req, res) {
   const payload = JSON.stringify({
     title: `Week ${nudge.week} — ${nudge.title}`,
     body: nudge.text,
-    icon: '/icons/icon.svg',
+    icon: '/icons/notification-icon.png',
+    badge: '/icons/badge.png',
     data: { url: `/?week=${nudge.week}` },
   })
 

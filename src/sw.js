@@ -41,8 +41,12 @@ self.addEventListener('push', (event) => {
   const title = payload.title || 'Master Key'
   const options = {
     body: payload.body || rawText || 'You have a new notification.',
-    icon: payload.icon || '/icons/icon.svg',
-    badge: payload.icon || '/icons/icon.svg',
+    // SVG icons silently no-op in showNotification() on Chromium-based
+    // browsers (confirmed in-browser: notification just doesn't render) —
+    // these fall back to rasterized PNGs, matching what the send endpoints
+    // now send in payload.icon/payload.badge.
+    icon: payload.icon || '/icons/notification-icon.png',
+    badge: payload.badge || '/icons/badge.png',
     data: { url: (payload.data && payload.data.url) || '/' },
   }
 
