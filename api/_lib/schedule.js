@@ -39,5 +39,10 @@ export function isDueToday(subscription, now = new Date()) {
   }
 
   const daysSinceLastSent = (now.getTime() - lastSent.getTime()) / MS_PER_DAY
-  return daysSinceLastSent >= intervalDays
+  // Small grace window: a scheduled cron run can fire a few minutes earlier
+  // than the previous day's run (ordinary scheduling jitter), which would
+  // otherwise land daysSinceLastSent just under a whole-number intervalDays
+  // and skip a day. Most visible at frequency=7 (intervalDays=1, i.e. "every
+  // day"), where any jitter at all would trip this without the grace window.
+  return daysSinceLastSent >= intervalDays - 0.1
 }

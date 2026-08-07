@@ -108,13 +108,17 @@ export default function NotificationSettings({ session }) {
       const registration = await navigator.serviceWorker.ready
       const subscription = await registration.pushManager.getSubscription()
       if (subscription) {
+        // Scoped to this device's own endpoint — a user_id-only update would
+        // silently disable every other device this user has notifications
+        // enabled on too (push_subscriptions has one row per endpoint, not
+        // per user).
         await supabase.from('push_subscriptions').update({ enabled: false }).eq('endpoint', subscription.endpoint)
         await subscription.unsubscribe()
-      } else {
-        // No local subscription object (different browser/session) — still
-        // make sure the row is marked disabled server-side.
-        await supabase.from('push_subscriptions').update({ enabled: false }).eq('user_id', session.user.id)
       }
+      // No local subscription object: this device has no endpoint to scope
+      // a disable to (never subscribed here, or it already lapsed) —
+      // deliberately not falling back to a user-wide update, since that
+      // would reach every other device on file, not just this one.
       setEnabled(false)
     } catch (err) {
       setError(err.message || 'Could not disable notifications.')

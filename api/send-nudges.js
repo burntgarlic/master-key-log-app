@@ -1,4 +1,5 @@
 import webpush from 'web-push'
+import { timingSafeEqual } from 'node:crypto'
 import { supabaseAdmin } from './_lib/supabaseAdmin.js'
 import { pickNudge } from './_lib/nudges.js'
 import { isDueToday } from './_lib/schedule.js'
@@ -8,16 +9,34 @@ const VAPID_PUBLIC_KEY = process.env.VITE_VAPID_PUBLIC_KEY
 const VAPID_PRIVATE_KEY = process.env.VAPID_PRIVATE_KEY
 const VAPID_SUBJECT = process.env.VAPID_SUBJECT
 
+// Header only — no query-string fallback. Vercel sends
+// `Authorization: Bearer $CRON_SECRET` automatically on its own scheduled
+// invocations whenever a CRON_SECRET env var exists on the project, so a
+// query param was never actually needed for the real automated path, and
+// query strings get written into request logs (Vercel's own, and any
+// intermediate proxy/CDN) — not somewhere a secret should end up.
 function isAuthorized(req) {
   if (!CRON_SECRET) return false
   const authHeader = req.headers.authorization || ''
-  if (authHeader === `Bearer ${CRON_SECRET}`) return true
-  const querySecret = req.query?.secret
-  if (querySecret && querySecret === CRON_SECRET) return true
-  return false
+  const expected = `Bearer ${CRON_SECRET}`
+  const authBuf = Buffer.from(authHeader)
+  const expectedBuf = Buffer.from(expected)
+  // timingSafeEqual throws on mismatched lengths rather than returning
+  // false, and the length of the header isn't itself sensitive — safe to
+  // short-circuit on that before the constant-time comparison of contents.
+  if (authBuf.length !== expectedBuf.length) return false
+  return timingSafeEqual(authBuf, expectedBuf)
 }
 
 export default async function handler(req, res) {
+  // Vercel Cron invokes via GET; POST is also accepted for manual/local
+  // testing parity with send-test-nudge.js. Anything else is rejected
+  // outright rather than falling through to the auth check.
+  if (req.method !== 'GET' && req.method !== 'POST') {
+    res.status(405).json({ error: 'Method not allowed' })
+    return
+  }
+
   if (!isAuthorized(req)) {
     res.status(401).json({ error: 'Unauthorized' })
     return

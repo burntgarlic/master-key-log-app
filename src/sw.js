@@ -30,11 +30,9 @@ self.addEventListener('push', (event) => {
   if (event.data) {
     try {
       payload = event.data.json()
-    } catch (err) {
-      console.log('[sw] push payload is not valid JSON, falling back:', err.message)
+    } catch {
+      // Not valid JSON — falls through to the payload-less defaults below.
     }
-  } else {
-    console.log('[sw] push event had no event.data at all')
   }
   payload = payload || {}
 
@@ -49,8 +47,6 @@ self.addEventListener('push', (event) => {
     badge: payload.badge || '/icons/badge.png',
     data: { url: (payload.data && payload.data.url) || '/' },
   }
-
-  console.log('[sw] showing notification:', title, options)
 
   // Always shows something — missing/malformed data falls back rather
   // than bailing, and everything (including the fallback path) is inside
