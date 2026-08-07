@@ -28,7 +28,7 @@
 
 .mode-btn.active {
   background: var(--accent);
-  color: #14151a;
+  color: var(--on-accent);
 }
 
 .timer-panel {
@@ -55,8 +55,8 @@
 .control-btn {
   flex: 1;
   padding: 0.9rem 1rem;
-  border-radius: 14px;
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: var(--radius-btn);
+  border: 1px solid var(--border-strong);
   background: var(--surface);
   color: var(--text);
   font: inherit;
@@ -71,7 +71,7 @@
 
 .control-btn.primary {
   background: var(--accent);
-  color: #14151a;
+  color: var(--on-accent);
   border-color: var(--accent);
 }
 
@@ -84,8 +84,8 @@
 .preset-btn {
   flex: 1;
   padding: 0.7rem 0.5rem;
-  border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: var(--radius);
+  border: 1px solid var(--border-strong);
   background: var(--surface);
   color: var(--text);
   font: inherit;
@@ -107,8 +107,8 @@
   flex: 1;
   min-width: 0;
   padding: 0.7rem 0.9rem;
-  border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: var(--radius);
+  border: 1px solid var(--border-strong);
   background: var(--surface);
   color: var(--text);
   font: inherit;
@@ -122,7 +122,7 @@
 .log-session-btn {
   width: 100%;
   padding: 0.9rem 1rem;
-  border-radius: 14px;
+  border-radius: var(--radius-btn);
   border: none;
   background: transparent;
   color: var(--accent);

@@ -9,9 +9,9 @@
   flex-direction: column;
   gap: 0.9rem;
   padding: 1rem;
-  border-radius: 12px;
+  border-radius: var(--radius);
   background: var(--surface);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--border);
 }
 
 .journal-editing-label {
@@ -26,12 +26,11 @@
 .journal-form textarea,
 .journal-form select {
   padding: 0.7rem 0.9rem;
-  border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: var(--radius);
+  border: 1px solid var(--border-strong);
   background: var(--bg);
   color: var(--text);
   font: inherit;
-  color-scheme: dark;
   resize: vertical;
 }
 
@@ -43,10 +42,10 @@
 .journal-submit-btn {
   flex: 1;
   padding: 0.85rem 1rem;
-  border-radius: 14px;
+  border-radius: var(--radius-btn);
   border: none;
   background: var(--accent);
-  color: #14151a;
+  color: var(--on-accent);
   font: inherit;
   font-weight: 700;
   cursor: pointer;
@@ -54,8 +53,8 @@
 
 .journal-cancel-btn {
   padding: 0.85rem 1rem;
-  border-radius: 14px;
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: var(--radius-btn);
+  border: 1px solid var(--border-strong);
   background: none;
   color: var(--text);
   font: inherit;
@@ -70,8 +69,8 @@
 .journal-search-input {
   flex: 1;
   padding: 0.7rem 0.9rem;
-  border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: var(--radius);
+  border: 1px solid var(--border-strong);
   background: var(--surface);
   color: var(--text);
   font: inherit;
@@ -79,12 +78,11 @@
 
 .journal-week-filter {
   padding: 0.7rem 0.6rem;
-  border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: var(--radius);
+  border: 1px solid var(--border-strong);
   background: var(--surface);
   color: var(--text);
   font: inherit;
-  color-scheme: dark;
 }
 
 .smart-search-row {
@@ -124,7 +122,7 @@
 
 .smart-error {
   margin: -0.5rem 0 0;
-  color: #e88f8f;
+  color: var(--danger);
   font-size: 0.85rem;
 }
 
@@ -149,9 +147,9 @@
 
 .journal-item {
   padding: 0.8rem 0.9rem;
-  border-radius: 12px;
+  border-radius: var(--radius);
   background: var(--surface);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--border);
 }
 
 .journal-item-header {
@@ -181,7 +179,9 @@
 
 .journal-item-title {
   margin: 0 0 0.3rem;
-  font-weight: 700;
+  font-family: var(--font-serif);
+  font-size: 1.05rem;
+  font-weight: 600;
 }
 
 .journal-item-snippet {
@@ -200,7 +200,7 @@
 .journal-delete-btn {
   padding: 0.35rem 0.7rem;
   border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  border: 1px solid var(--border-strong);
   background: none;
   color: var(--text);
   font: inherit;
@@ -209,12 +209,12 @@
 }
 
 .journal-delete-btn {
-  border-color: #d16b6b;
-  color: #e88f8f;
+  border-color: var(--danger-border);
+  color: var(--danger);
 }
 
 mark {
-  background: rgba(232, 182, 76, 0.35);
+  background: rgba(var(--accent-rgb), 0.35);
   color: inherit;
   border-radius: 3px;
 }

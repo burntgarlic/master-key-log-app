@@ -2,6 +2,23 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <!-- Blocking (no `type="module"`, no `defer`) and placed before any
+         stylesheet so it runs before first paint — sets data-theme from a
+         saved explicit choice before CSS ever resolves color tokens, which
+         is what avoids a flash of the wrong theme on load. "System" mode
+         (the default) deliberately sets nothing here: index.css's bare
+         :root + prefers-color-scheme media query already track the OS
+         preference with pure CSS, so there's nothing to flash in that case
+         either. Must stay in sync with src/lib/theme.js — same key,
+         same 'light'/'dark'-only convention. -->
+    <script>
+      (function () {
+        try {
+          var t = localStorage.getItem('mk_theme')
+          if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t)
+        } catch (e) {}
+      })()
+    </script>
     <meta
       name="viewport"
       content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover"

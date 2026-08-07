@@ -6,9 +6,9 @@
 
 .week-tracker {
   padding: 0.9rem 1rem;
-  border-radius: 12px;
+  border-radius: var(--radius);
   background: var(--surface);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--border);
 }
 
 .week-tracker-header {
@@ -36,7 +36,7 @@
   flex: 1;
   height: 1.6rem;
   border-radius: 6px;
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  border: 1px solid var(--border-strong);
   background: transparent;
 }
 
@@ -46,9 +46,9 @@
 }
 
 .week-brief {
-  border-radius: 12px;
+  border-radius: var(--radius);
   background: var(--surface);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--border);
   overflow: hidden;
 }
 
@@ -66,6 +66,11 @@
   font-weight: 600;
   text-align: left;
   cursor: pointer;
+}
+
+.week-brief-title {
+  font-family: var(--font-serif);
+  font-size: 1.05rem;
 }
 
 .week-brief-chevron {
@@ -125,12 +130,11 @@
 
 .field input {
   padding: 0.7rem 0.9rem;
-  border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: var(--radius);
+  border: 1px solid var(--border-strong);
   background: var(--surface);
   color: var(--text);
   font: inherit;
-  color-scheme: dark;
 }
 
 .score-picker {
@@ -142,7 +146,7 @@
   flex: 1;
   padding: 0.6rem 0;
   border-radius: 10px;
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  border: 1px solid var(--border-strong);
   background: var(--surface);
   color: var(--text);
   font: inherit;
@@ -152,16 +156,16 @@
 
 .score-btn.active {
   background: var(--accent);
-  color: #14151a;
+  color: var(--on-accent);
   border-color: var(--accent);
 }
 
 .log-submit-btn {
   padding: 0.9rem 1rem;
-  border-radius: 14px;
+  border-radius: var(--radius-btn);
   border: none;
   background: var(--accent);
-  color: #14151a;
+  color: var(--on-accent);
   font: inherit;
   font-weight: 700;
   cursor: pointer;
@@ -169,9 +173,9 @@
 
 .trend-block {
   padding: 0.9rem 1rem;
-  border-radius: 12px;
+  border-radius: var(--radius);
   background: var(--surface);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--border);
 }
 
 .trend-title {
@@ -206,7 +210,7 @@
 .export-btn {
   flex: 1;
   padding: 0.7rem 1rem;
-  border-radius: 12px;
+  border-radius: var(--radius);
   border: 1px solid var(--accent);
   background: none;
   color: var(--accent);
@@ -245,9 +249,9 @@
   align-items: center;
   gap: 0.6rem;
   padding: 0.55rem 0.7rem;
-  border-radius: 10px;
+  border-radius: var(--radius);
   background: var(--surface);
-  border: 1px solid rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--border);
   font-size: 0.85rem;
 }
 
@@ -281,9 +285,9 @@
   flex-shrink: 0;
   padding: 0.25rem 0.55rem;
   border-radius: 999px;
-  border: 1px solid #d16b6b;
+  border: 1px solid var(--danger-border);
   background: none;
-  color: #e88f8f;
+  color: var(--danger);
   font: inherit;
   font-size: 0.7rem;
   white-space: nowrap;

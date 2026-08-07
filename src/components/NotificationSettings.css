@@ -1,7 +1,7 @@
 .notification-settings {
-  border-radius: 12px;
+  border-radius: var(--radius);
   background: var(--surface);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--border);
   overflow: hidden;
 }
 
@@ -52,11 +52,10 @@
 .notification-frequency-row select {
   padding: 0.4rem 0.6rem;
   border-radius: 10px;
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  border: 1px solid var(--border-strong);
   background: var(--bg);
   color: var(--text);
   font: inherit;
-  color-scheme: dark;
 }
 
 .notification-toggle-row input[type='checkbox'] {
@@ -88,5 +87,5 @@
 }
 
 .notification-status.error {
-  color: #e88f8f;
+  color: var(--danger);
 }

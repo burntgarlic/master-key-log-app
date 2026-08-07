@@ -42,6 +42,28 @@ export function extractWeekBrief(body) {
   }
 }
 
+// "**Phase I · Foundation**" -> "I · Foundation", for the Home dashboard's
+// hero card ("Week N · Phase ...").
+export function extractPhase(body) {
+  const match = body.match(/\*\*Phase\s+([^\n*]+)\*\*/)
+  return match ? match[1].trim() : null
+}
+
+// Same extraction api/_lib/nudges.js does server-side for push notification
+// text — duplicated rather than imported because that file can't import
+// this one (it runs as a bare Node/Vercel function and reads manual.md via
+// fs.readFileSync, not Vite's `?raw` import). Used here for the Home
+// dashboard's "Today's seed" card, so both surfaces draw from the exact
+// same underlying seed list per week, just parsed on different sides.
+export function extractSeeds(body) {
+  const match = body.match(/\*\*Contemplation seeds\.\*\*\s*\n((?:-\s.+\n?)+)/)
+  if (!match) return []
+  return match[1]
+    .split('\n')
+    .map((line) => line.replace(/^-\s*/, '').trim())
+    .filter(Boolean)
+}
+
 function stripMarkdown(text) {
   return text
     .replace(/^#+\s*/gm, '')

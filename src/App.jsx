@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import './App.css'
+import Home from './components/Home.jsx'
 import Timer from './components/Timer.jsx'
 import Manual from './components/Manual.jsx'
 import SessionLog from './components/SessionLog.jsx'
@@ -13,6 +14,7 @@ import { supabase } from './lib/supabaseClient.js'
 import { getGuestMode, setGuestMode } from './lib/storage.js'
 
 const TABS = [
+  { id: 'home', label: 'Home', icon: '🏠', Component: Home },
   { id: 'timer', label: 'Timer', icon: '⏱', Component: Timer },
   { id: 'manual', label: 'Manual', icon: '📖', Component: Manual },
   { id: 'log', label: 'Log', icon: '📝', Component: SessionLog },
@@ -48,7 +50,7 @@ function consumeDeepLinkWeek() {
 
 export default function App() {
   const [deepLinkWeek] = useState(consumeDeepLinkWeek)
-  const [activeTab, setActiveTab] = useState(() => (deepLinkWeek ? 'manual' : 'timer'))
+  const [activeTab, setActiveTab] = useState(() => (deepLinkWeek ? 'manual' : 'home'))
   const { session, loading, supabaseEnabled } = useAuthSession()
   const [guestMode, setGuestModeState] = useState(() => getGuestMode())
 
@@ -75,7 +77,7 @@ export default function App() {
 
   return (
     <div className="app-shell">
-      {supabaseEnabled && <AccountMenu session={session} onSignInClick={handleSignInWithGoogle} />}
+      <AccountMenu session={session} onSignInClick={handleSignInWithGoogle} supabaseEnabled={supabaseEnabled} />
 
       <main className="app-content">
         <ActiveComponent onNavigate={setActiveTab} session={session} deepLinkWeek={deepLinkWeek} />

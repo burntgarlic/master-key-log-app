@@ -41,7 +41,9 @@ export default defineConfig({
       srcDir: 'src',
       filename: 'sw.js',
       injectManifest: {
-        globPatterns: ['**/*.{js,css,html,svg,png,md}'],
+        // woff2 added for the self-hosted Newsreader font (src/index.css)
+        // so it's precached for offline use like everything else here.
+        globPatterns: ['**/*.{js,css,html,svg,png,md,woff2}'],
       },
       registerType: 'autoUpdate',
       includeAssets: ['icons/icon.svg', 'icons/notification-icon.png', 'icons/badge.png'],
