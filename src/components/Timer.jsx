@@ -7,6 +7,7 @@ import {
   setPendingSessionStartTime,
   getPracticeLength,
   getPracticeStyle,
+  consumeAutoStartPractice,
 } from '../lib/storage.js'
 import { toLocalTimeString } from '../lib/time.js'
 
@@ -149,6 +150,22 @@ export default function Timer({ onNavigate }) {
   const [customMinutes, setCustomMinutes] = useState('')
 
   useWakeLock(stopwatch.running || countdown.running)
+
+  useEffect(() => {
+    if (!consumeAutoStartPractice()) return
+    if (mode === 'stopwatch') {
+      stopwatch.start()
+    } else {
+      countdown.start()
+    }
+    // Intentionally run-once-on-mount: this consumes a one-shot flag the
+    // Home dashboard's "Begin practice" button sets right before
+    // navigating here, not a value that should re-fire the effect on
+    // every render — stopwatch/countdown/mode are fresh identities each
+    // render anyway, so listing them as deps would just mean "run on
+    // every render", which isn't what a one-shot mount action wants.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   function logStopwatchSession() {
     const minutes = Math.max(1, Math.round(stopwatch.elapsedMs / 60000))

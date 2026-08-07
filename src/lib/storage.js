@@ -141,6 +141,23 @@ export function setPracticeStyle(style) {
   localStorage.setItem(PRACTICE_STYLE_KEY, style === 'stopwatch' ? 'stopwatch' : 'countdown')
 }
 
+const AUTO_START_PRACTICE_KEY = 'mk_autostart_practice'
+
+// Set by the Home dashboard's "Begin practice" button just before it
+// navigates to the Timer tab, so Timer.jsx knows to configure itself per
+// the practice settings above and start immediately, rather than just
+// landing idle. Read-then-cleared (see consumeAutoStartPractice) so it
+// only fires the one time, not on every later visit to the tab.
+export function setAutoStartPractice() {
+  localStorage.setItem(AUTO_START_PRACTICE_KEY, '1')
+}
+
+export function consumeAutoStartPractice() {
+  const flag = localStorage.getItem(AUTO_START_PRACTICE_KEY) === '1'
+  localStorage.removeItem(AUTO_START_PRACTICE_KEY)
+  return flag
+}
+
 const GUEST_MODE_KEY = 'mk_guest_mode'
 
 // Persists "Continue without an account" so the startup login gate doesn't

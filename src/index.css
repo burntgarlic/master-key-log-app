@@ -31,6 +31,8 @@
   --accent-rgb: 224, 168, 46;
   --on-accent: #14151a; /* dark text on gold buttons, in both themes */
   --nav-height: 64px;
+  --radius: 12px;
+  --font-serif: 'Newsreader', Georgia, serif;
 
   /* Dark palette (default). */
   --bg: #14151a;
@@ -87,6 +89,22 @@
   --danger: #e88f8f;
   --danger-border: #d16b6b;
   --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.45);
+}
+
+/* Self-hosted rather than a Google Fonts <link> so it's covered by the
+   PWA's own service-worker precache (see vite.config.js's globPatterns)
+   and keeps working offline — an external CDN request wouldn't be. Single
+   variable-font file spanning the weight range Google's own CSS API
+   serves it as (confirmed: requesting 400/600/700 separately all resolved
+   to this same file), so one @font-face with a weight range is correct
+   here rather than three separate static-weight declarations. Latin
+   subset only — the app's content is English-only. */
+@font-face {
+  font-family: 'Newsreader';
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url('/fonts/newsreader-latin-variable.woff2') format('woff2');
 }
 
 * {
