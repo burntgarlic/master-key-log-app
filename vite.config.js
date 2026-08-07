@@ -28,8 +28,23 @@ export default defineConfig({
   plugins: [
     react(),
     VitePWA({
+      // Switched from the default generateSW strategy to injectManifest so
+      // we can ship a hand-written service worker (src/sw.js) with our own
+      // 'push'/'notificationclick' listeners — generateSW only lets you
+      // configure Workbox's auto-generated SW, it has no hook for adding
+      // arbitrary event listeners. injectManifest still gets us the same
+      // precaching behavior: our SW calls precacheAndRoute(self.__WB_MANIFEST),
+      // and vite-plugin-pwa replaces that placeholder with the real asset
+      // list at build time (via the injectManifest.globPatterns below,
+      // carried over unchanged from the old top-level workbox.globPatterns).
+      strategies: 'injectManifest',
+      srcDir: 'src',
+      filename: 'sw.js',
+      injectManifest: {
+        globPatterns: ['**/*.{js,css,html,svg,png,md}'],
+      },
       registerType: 'autoUpdate',
-      includeAssets: ['icons/icon.svg'],
+      includeAssets: ['icons/icon.svg', 'icons/notification-icon.png', 'icons/badge.png'],
       manifest: {
         name: 'Master Key',
         short_name: 'MasterKey',
@@ -40,15 +55,18 @@ export default defineConfig({
         theme_color: '#14151a',
         icons: [
           {
-            src: '/icons/icon.svg',
-            sizes: 'any',
-            type: 'image/svg+xml',
+            src: '/icons/icon-192.png',
+            sizes: '192x192',
+            type: 'image/png',
+            purpose: 'any maskable',
+          },
+          {
+            src: '/icons/icon-512.png',
+            sizes: '512x512',
+            type: 'image/png',
             purpose: 'any maskable',
           },
         ],
-      },
-      workbox: {
-        globPatterns: ['**/*.{js,css,html,svg,md}'],
       },
     }),
   ],

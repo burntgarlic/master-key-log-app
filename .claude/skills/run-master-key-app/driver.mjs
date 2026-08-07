@@ -8,15 +8,16 @@
 import { chromium } from 'playwright'
 import * as readline from 'node:readline'
 import * as fs from 'node:fs'
+import * as os from 'node:os'
 import * as path from 'node:path'
 
 const SHOT_DIR = process.env.SCREENSHOT_DIR
   || path.resolve(import.meta.dirname, 'screenshots')
 fs.mkdirSync(SHOT_DIR, { recursive: true })
 
-let browser = null
 let context = null
 let page = null
+let userDataDir = null
 const consoleErrors = []
 
 function requirePage() {
@@ -26,10 +27,17 @@ function requirePage() {
 
 const COMMANDS = {
   async launch(url) {
-    if (browser) return console.log('already launched')
-    browser = await chromium.launch({ headless: true })
-    context = await browser.newContext()
-    page = await context.newPage()
+    if (context) return console.log('already launched')
+    // A plain chromium.launch() + browser.newContext() is an incognito-style
+    // profile, and Chrome deliberately disables the Push API there with no
+    // way to feature-detect it (https://crbug.com/41124656) — subscribing
+    // fails with "Registration failed - permission denied". A persistent
+    // context (a real, if temporary, profile directory) is a real Chrome
+    // profile as far as that check is concerned, and Push API calls work
+    // normally. Needed for anything that calls pushManager.subscribe().
+    userDataDir = fs.mkdtempSync(path.join(os.tmpdir(), 'mk-driver-'))
+    context = await chromium.launchPersistentContext(userDataDir, { headless: true })
+    page = context.pages()[0] || await context.newPage()
     page.on('console', (msg) => {
       if (msg.type() === 'error') consoleErrors.push(msg.text())
     })
@@ -167,11 +175,24 @@ const COMMANDS = {
     console.log('reloaded')
   },
 
+  // Grants a browser permission (e.g. "notifications") for the current
+  // page's origin — needed to test Notification/Push APIs, which otherwise
+  // sit in the default "prompt" state with no way to click an OS dialog.
+  async grant(permission) {
+    if (!context) return console.log('ERROR: launch first')
+    const p = requirePage()
+    await context.grantPermissions([permission], { origin: new URL(p.url()).origin })
+    console.log('granted:', permission)
+  },
+
   async quit() {
-    if (browser) await browser.close().catch(() => {})
-    browser = null
+    if (context) await context.close().catch(() => {})
     context = null
     page = null
+    if (userDataDir) {
+      fs.rm(userDataDir, { recursive: true, force: true }, () => {})
+      userDataDir = null
+    }
   },
 
   help() {

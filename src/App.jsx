@@ -7,7 +7,7 @@ import Journal from './components/Journal.jsx'
 import Chat from './components/Chat.jsx'
 import DevPanel from './components/DevPanel.jsx'
 import LoginGate from './components/LoginGate.jsx'
-import AccountBar from './components/AccountBar.jsx'
+import AccountMenu from './components/AccountMenu.jsx'
 import { useAuthSession } from './lib/useAuthSession.js'
 import { supabase } from './lib/supabaseClient.js'
 import { getGuestMode, setGuestMode } from './lib/storage.js'
@@ -34,8 +34,21 @@ function handleSignInWithGoogle() {
   })
 }
 
+// Reads a `?week=N` query param left by a notification's deep link (see
+// src/sw.js's notificationclick handler and api/_lib/nudges.js) and clears
+// it from the URL immediately so it doesn't re-apply on a later reload —
+// it's meant to jump straight to that week once, not pin the URL there.
+function consumeDeepLinkWeek() {
+  const params = new URLSearchParams(window.location.search)
+  const week = Number(params.get('week'))
+  if (!Number.isInteger(week) || week < 1 || week > 26) return null
+  window.history.replaceState(null, '', window.location.pathname)
+  return week
+}
+
 export default function App() {
-  const [activeTab, setActiveTab] = useState('timer')
+  const [deepLinkWeek] = useState(consumeDeepLinkWeek)
+  const [activeTab, setActiveTab] = useState(() => (deepLinkWeek ? 'manual' : 'timer'))
   const { session, loading, supabaseEnabled } = useAuthSession()
   const [guestMode, setGuestModeState] = useState(() => getGuestMode())
 
@@ -62,10 +75,10 @@ export default function App() {
 
   return (
     <div className="app-shell">
-      {supabaseEnabled && <AccountBar session={session} onSignInClick={handleSignInWithGoogle} />}
+      {supabaseEnabled && <AccountMenu session={session} onSignInClick={handleSignInWithGoogle} />}
 
       <main className="app-content">
-        <ActiveComponent onNavigate={setActiveTab} />
+        <ActiveComponent onNavigate={setActiveTab} session={session} deepLinkWeek={deepLinkWeek} />
       </main>
 
       <nav className="bottom-nav">
