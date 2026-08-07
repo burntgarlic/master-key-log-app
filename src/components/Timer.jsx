@@ -2,7 +2,8 @@ import { useEffect, useRef, useState } from 'react'
 import './Timer.css'
 import { useWakeLock } from '../lib/useWakeLock.js'
 import { primeChime, playChime } from '../lib/chime.js'
-import { setPendingSessionMinutes } from '../lib/storage.js'
+import { setPendingSessionMinutes, setPendingSessionStartTime } from '../lib/storage.js'
+import { toLocalTimeString } from '../lib/time.js'
 
 const PRESET_MINUTES = [15, 20, 30]
 
@@ -22,6 +23,13 @@ function useStopwatch() {
   const [running, setRunning] = useState(false)
   const baseRef = useRef(0)
   const startedAtRef = useRef(null)
+  // The actual wall-clock moment Start was first pressed for this session —
+  // distinct from startedAtRef above, which is a running-total bookkeeping
+  // timestamp that gets overwritten on every resume. This one is set once
+  // and holds through pause/resume, only clearing on Reset, so a paused-
+  // and-resumed session still reports its true start rather than the last
+  // resume point.
+  const sessionStartRef = useRef(null)
 
   useEffect(() => {
     if (!running) return
@@ -34,6 +42,9 @@ function useStopwatch() {
 
   function start() {
     primeChime()
+    if (sessionStartRef.current === null) {
+      sessionStartRef.current = new Date()
+    }
     setRunning(true)
   }
 
@@ -48,9 +59,10 @@ function useStopwatch() {
     setRunning(false)
     baseRef.current = 0
     setElapsedMs(0)
+    sessionStartRef.current = null
   }
 
-  return { elapsedMs, running, start, pause, reset }
+  return { elapsedMs, running, start, pause, reset, startedAt: sessionStartRef.current }
 }
 
 function useCountdown(onFinish) {
@@ -60,6 +72,9 @@ function useCountdown(onFinish) {
   const [finished, setFinished] = useState(false)
   const baseRemainingRef = useRef(PRESET_MINUTES[0] * 60000)
   const startedAtRef = useRef(null)
+  // Same "true first start, survives pause/resume" tracking as the
+  // stopwatch's sessionStartRef — see its comment there.
+  const sessionStartRef = useRef(null)
 
   useEffect(() => {
     if (!running) return
@@ -89,6 +104,9 @@ function useCountdown(onFinish) {
   function start() {
     if (remainingMs <= 0) return
     primeChime()
+    if (sessionStartRef.current === null) {
+      sessionStartRef.current = new Date()
+    }
     setFinished(false)
     setRunning(true)
   }
@@ -106,9 +124,10 @@ function useCountdown(onFinish) {
     setFinished(false)
     setRemainingMs(durationMs)
     baseRemainingRef.current = durationMs
+    sessionStartRef.current = null
   }
 
-  return { durationMs, remainingMs, running, finished, selectDuration, start, pause, reset }
+  return { durationMs, remainingMs, running, finished, selectDuration, start, pause, reset, startedAt: sessionStartRef.current }
 }
 
 export default function Timer({ onNavigate }) {
@@ -125,6 +144,7 @@ export default function Timer({ onNavigate }) {
   function logStopwatchSession() {
     const minutes = Math.max(1, Math.round(stopwatch.elapsedMs / 60000))
     setPendingSessionMinutes(minutes)
+    if (stopwatch.startedAt) setPendingSessionStartTime(toLocalTimeString(stopwatch.startedAt))
     onNavigate?.('log')
   }
 
@@ -132,6 +152,7 @@ export default function Timer({ onNavigate }) {
     const elapsedMs = countdown.durationMs - countdown.remainingMs
     const minutes = Math.max(1, Math.round(elapsedMs / 60000))
     setPendingSessionMinutes(minutes)
+    if (countdown.startedAt) setPendingSessionStartTime(toLocalTimeString(countdown.startedAt))
     onNavigate?.('log')
   }
 
