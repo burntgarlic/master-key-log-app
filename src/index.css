@@ -1,11 +1,92 @@
+/* ---------------------------------------------------------------------
+ * Theme tokens
+ *
+ * Cascade (three layers, each one only overriding what actually changes
+ * between themes):
+ *   1. Bare :root — the dark palette, used whenever nothing more specific
+ *      matches (covers "no data-theme attribute + OS is dark", and is the
+ *      safe fallback for browsers with no matchMedia support at all).
+ *   2. `@media (prefers-color-scheme: light)` + `:root:not([data-theme='dark'])`
+ *      — "no explicit choice has been made, and the OS prefers light" ->
+ *      switch to the light palette. The `:not([data-theme='dark'])` guard
+ *      is what lets an explicit "dark" choice keep winning even when the
+ *      OS itself is set to light.
+ *   3. `:root[data-theme='light'|'dark']` — an explicit in-app choice,
+ *      set via src/lib/theme.js (and mirrored by the blocking inline
+ *      script in index.html so it applies before first paint, with no
+ *      flash). Higher specificity than both of the above, so it always
+ *      wins regardless of OS preference.
+ *
+ * "Follow system" (the default) means simply never setting data-theme at
+ * all — layers 1 and 2 alone already track prefers-color-scheme with pure
+ * CSS, no JS required, so there's nothing to flash in that (most common)
+ * case either.
+ * --------------------------------------------------------------------- */
+
 :root {
+  color-scheme: dark;
+
+  /* Tokens that don't change between themes. */
+  --accent: #e0a82e;
+  --accent-rgb: 224, 168, 46;
+  --on-accent: #14151a; /* dark text on gold buttons, in both themes */
+  --nav-height: 64px;
+
+  /* Dark palette (default). */
+  --bg: #14151a;
+  --surface: #1e2027;
+  --text: #f0f0f2;
+  --text-dim: #9a9ba5;
+  --border: rgba(255, 255, 255, 0.08);
+  --border-strong: rgba(255, 255, 255, 0.15);
+  --hover-surface: rgba(255, 255, 255, 0.06);
+  --danger: #e88f8f;
+  --danger-border: #d16b6b;
+  --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.45);
+}
+
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme='dark']) {
+    color-scheme: light;
+    --bg: #f6f1e7;
+    --surface: #ffffff;
+    --text: #2a2724;
+    --text-dim: #8a8377;
+    --border: #e9e1d0;
+    --border-strong: #ded2b8;
+    --hover-surface: rgba(42, 39, 36, 0.05);
+    --danger: #b3453a;
+    --danger-border: #c96a5c;
+    --shadow-lg: 0 10px 30px rgba(42, 39, 36, 0.12);
+  }
+}
+
+:root[data-theme='light'] {
+  color-scheme: light;
+  --bg: #f6f1e7;
+  --surface: #ffffff;
+  --text: #2a2724;
+  --text-dim: #8a8377;
+  --border: #e9e1d0;
+  --border-strong: #ded2b8;
+  --hover-surface: rgba(42, 39, 36, 0.05);
+  --danger: #b3453a;
+  --danger-border: #c96a5c;
+  --shadow-lg: 0 10px 30px rgba(42, 39, 36, 0.12);
+}
+
+:root[data-theme='dark'] {
   color-scheme: dark;
   --bg: #14151a;
   --surface: #1e2027;
   --text: #f0f0f2;
   --text-dim: #9a9ba5;
-  --accent: #e8b64c;
-  --nav-height: 64px;
+  --border: rgba(255, 255, 255, 0.08);
+  --border-strong: rgba(255, 255, 255, 0.15);
+  --hover-surface: rgba(255, 255, 255, 0.06);
+  --danger: #e88f8f;
+  --danger-border: #d16b6b;
+  --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.45);
 }
 
 * {
@@ -22,4 +103,11 @@ body {
   color: var(--text);
   font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   -webkit-tap-highlight-color: transparent;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body {
+    transition: none;
+  }
 }

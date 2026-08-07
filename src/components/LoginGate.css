@@ -17,7 +17,7 @@
   padding: 2rem 1.5rem;
   border-radius: 16px;
   background: var(--surface);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--border);
   text-align: center;
 }
 
@@ -38,7 +38,7 @@
   border-radius: 14px;
   border: none;
   background: var(--accent);
-  color: #14151a;
+  color: var(--on-accent);
   font: inherit;
   font-weight: 700;
   cursor: pointer;

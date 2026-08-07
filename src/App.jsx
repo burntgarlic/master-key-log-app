@@ -75,7 +75,7 @@ export default function App() {
 
   return (
     <div className="app-shell">
-      {supabaseEnabled && <AccountMenu session={session} onSignInClick={handleSignInWithGoogle} />}
+      <AccountMenu session={session} onSignInClick={handleSignInWithGoogle} supabaseEnabled={supabaseEnabled} />
 
       <main className="app-content">
         <ActiveComponent onNavigate={setActiveTab} session={session} deepLinkWeek={deepLinkWeek} />

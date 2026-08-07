@@ -12,7 +12,7 @@
   padding: 0.75rem 1rem;
   border-radius: 12px;
   background: var(--surface);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--border);
 }
 
 .current-week-banner strong {
@@ -35,7 +35,7 @@
   width: 100%;
   padding: 0.75rem 1rem;
   border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  border: 1px solid var(--border-strong);
   background: var(--surface);
   color: var(--text);
   font: inherit;
@@ -50,7 +50,7 @@
   padding: 0.25rem;
   background: var(--surface);
   border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--border);
 }
 
 .search-result {
@@ -68,7 +68,7 @@
 }
 
 .search-result:hover {
-  background: rgba(255, 255, 255, 0.06);
+  background: var(--hover-surface);
 }
 
 .result-week {
@@ -98,7 +98,7 @@
   width: 2.4rem;
   height: 2.4rem;
   border-radius: 10px;
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  border: 1px solid var(--border-strong);
   background: var(--surface);
   color: var(--text-dim);
   font: inherit;
@@ -113,7 +113,7 @@
 
 .week-chip.active {
   background: var(--accent);
-  color: #14151a;
+  color: var(--on-accent);
   border-color: var(--accent);
 }
 
@@ -156,7 +156,7 @@
 }
 
 .week-body .search-hit {
-  background: rgba(232, 182, 76, 0.25);
+  background: rgba(var(--accent-rgb), 0.25);
   border-radius: 4px;
   transition: background 0.4s ease;
 }
