@@ -3,7 +3,7 @@ import './AccountMenu.css'
 import NotificationSettings from './NotificationSettings.jsx'
 import { supabase } from '../lib/supabaseClient.js'
 import { getThemePreference, setThemePreference } from '../lib/theme.js'
-import { getPracticeLength, setPracticeLength, getPracticeStyle, setPracticeStyle } from '../lib/storage.js'
+import { usePracticeSettings, savePracticeSettings } from '../lib/practiceSettings.js'
 
 // Generic person glyph for guests — there's no email yet to derive initials
 // from.
@@ -65,29 +65,38 @@ const PRACTICE_STYLE_OPTIONS = [
 ]
 
 // The Home dashboard's "Begin practice" button and the Timer tab both read
-// these same two values (see storage.js's getPracticeLength/getPracticeStyle)
-// — this is the one place they're set.
+// these same two values via usePracticeSettings() (see
+// src/lib/practiceSettings.js) — this is the one place they're written.
+//
+// Selections here are staged locally (stagedLength/stagedStyle) rather than
+// committing on every click — a single Save button below commits both
+// fields together in one savePracticeSettings() call, which is what pushes
+// the change out to every other subscriber (Home, Timer) immediately, with
+// no reload.
 function PracticeControl() {
-  const [length, setLength] = useState(getPracticeLength)
-  const [style, setStyle] = useState(getPracticeStyle)
-  const [customMinutes, setCustomMinutes] = useState('')
-  const isPresetLength = PRACTICE_LENGTH_PRESETS.includes(length)
+  const saved = usePracticeSettings()
+  const [stagedLength, setStagedLength] = useState(saved.length)
+  const [stagedStyle, setStagedStyle] = useState(saved.style)
+  const [customDraft, setCustomDraft] = useState('')
+  const isPresetLength = PRACTICE_LENGTH_PRESETS.includes(stagedLength)
+  const dirty = stagedLength !== saved.length || stagedStyle !== saved.style
 
   function chooseLength(value) {
-    setPracticeLength(value)
-    setLength(value)
-    setCustomMinutes('')
+    setStagedLength(value)
+    setCustomDraft('')
   }
 
-  function applyCustomLength() {
-    const value = Math.round(Number(customMinutes))
-    if (!Number.isFinite(value) || value <= 0) return
-    chooseLength(Math.min(value, 180))
+  function handleCustomChange(e) {
+    const raw = e.target.value
+    setCustomDraft(raw)
+    const value = Math.round(Number(raw))
+    if (Number.isFinite(value) && value > 0) {
+      setStagedLength(Math.min(180, value))
+    }
   }
 
-  function chooseStyle(value) {
-    setPracticeStyle(value)
-    setStyle(value)
+  function handleSave() {
+    savePracticeSettings({ length: stagedLength, style: stagedStyle })
   }
 
   return (
@@ -98,7 +107,7 @@ function PracticeControl() {
           <button
             key={n}
             type="button"
-            className={`practice-chip${isPresetLength && length === n ? ' active' : ''}`}
+            className={`practice-chip${isPresetLength && stagedLength === n ? ' active' : ''}`}
             onClick={() => chooseLength(n)}
           >
             {n}
@@ -110,13 +119,10 @@ function PracticeControl() {
           min="1"
           max="180"
           className="practice-custom-input"
-          placeholder={isPresetLength ? 'Custom' : String(length)}
-          value={customMinutes}
-          onChange={(e) => setCustomMinutes(e.target.value)}
+          placeholder={isPresetLength ? 'Custom' : String(stagedLength)}
+          value={customDraft}
+          onChange={handleCustomChange}
         />
-        <button type="button" className="practice-custom-set-btn" onClick={applyCustomLength}>
-          Set
-        </button>
       </div>
 
       <span className="settings-label">Practice style</span>
@@ -126,14 +132,18 @@ function PracticeControl() {
             key={opt.value}
             type="button"
             role="radio"
-            aria-checked={style === opt.value}
-            className={`segmented-option${style === opt.value ? ' active' : ''}`}
-            onClick={() => chooseStyle(opt.value)}
+            aria-checked={stagedStyle === opt.value}
+            className={`segmented-option${stagedStyle === opt.value ? ' active' : ''}`}
+            onClick={() => setStagedStyle(opt.value)}
           >
             {opt.label}
           </button>
         ))}
       </div>
+
+      <button type="button" className="practice-save-btn" onClick={handleSave} disabled={!dirty}>
+        Save
+      </button>
     </div>
   )
 }

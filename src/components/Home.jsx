@@ -1,6 +1,7 @@
 import { useMemo } from 'react'
 import './Home.css'
-import { getSessions, getCurrentWeek, getPracticeLength, getPracticeStyle, setAutoStartPractice } from '../lib/storage.js'
+import { getSessions, getCurrentWeek, setAutoStartPractice } from '../lib/storage.js'
+import { usePracticeSettings } from '../lib/practiceSettings.js'
 import { manualText, parseWeeks, extractWeekBrief, extractPhase, extractSeeds } from '../lib/manual.js'
 import { primeChime } from '../lib/chime.js'
 
@@ -52,8 +53,7 @@ export default function Home({ onNavigate }) {
   const seed = useMemo(() => seedForToday(seeds), [seeds])
 
   const ticksThisWeek = sessions.filter((s) => s.week === currentWeek).length
-  const practiceStyle = getPracticeStyle()
-  const practiceLength = getPracticeLength()
+  const { length: practiceLength, style: practiceStyle } = usePracticeSettings()
   const beginLabel = practiceStyle === 'stopwatch' ? 'Begin practice' : `Begin practice · ${practiceLength} min`
 
   function handleBeginPractice() {

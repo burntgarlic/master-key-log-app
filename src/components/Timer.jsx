@@ -5,10 +5,9 @@ import { primeChime, playChime } from '../lib/chime.js'
 import {
   setPendingSessionMinutes,
   setPendingSessionStartTime,
-  getPracticeLength,
-  getPracticeStyle,
   consumeAutoStartPractice,
 } from '../lib/storage.js'
+import { usePracticeSettings } from '../lib/practiceSettings.js'
 import { toLocalTimeString } from '../lib/time.js'
 
 const PRESET_MINUTES = [15, 20, 30]
@@ -138,15 +137,20 @@ function useCountdown(onFinish, initialMinutes) {
 }
 
 export default function Timer({ onNavigate }) {
-  // 'countdown' / 'stopwatch' is the same vocabulary getPracticeStyle()
-  // already returns, so it doubles as the initial mode with no translation
-  // — opening the Timer tab lands on whichever style the user prefers.
-  const [mode, setMode] = useState(getPracticeStyle)
+  const practiceSettings = usePracticeSettings()
+  // 'countdown' / 'stopwatch' is the same vocabulary practiceSettings.style
+  // already uses, so it doubles as the initial mode with no translation —
+  // opening the Timer tab lands on whichever style the user prefers.
+  // useState/useCountdown only consume this as their initial value (read
+  // once, at mount) — deliberately not kept in sync afterward, so changing
+  // the setting elsewhere can't yank the mode/duration out from under an
+  // already-open, possibly in-progress session.
+  const [mode, setMode] = useState(practiceSettings.style)
   const stopwatch = useStopwatch()
   const countdown = useCountdown(() => {
     playChime()
     navigator.vibrate?.([200, 100, 200])
-  }, getPracticeLength())
+  }, practiceSettings.length)
   const [customMinutes, setCustomMinutes] = useState('')
 
   useWakeLock(stopwatch.running || countdown.running)
